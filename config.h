@@ -3,7 +3,7 @@
 
 #include <stdbool.h>
 
-#define N_KEY_BINDS 3
+#define N_KEY_BINDS 6
 
 /*
  * Specify length of chords (excluding modifiers).

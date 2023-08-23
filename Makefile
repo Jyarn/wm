@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-g -Wall
-FLAGS=
+FLAGS=-D__DEBUG__
 EXE=wm
 
 OBJ=wm.o event.o config.o
@@ -9,11 +9,11 @@ LIB=-lX11
 
 all: $(EXE)
 
-$(EXE): $(OBJ)
+$(EXE): $(OBJ) config.h
 	$(CC) $(LIB) $(OBJ) -o $(EXE)
 
 %.o: %.c
-	$(CC) $(CFLAGS) $(INC) -c $< -o $@
+	$(CC) $(CFLAGS) $(FLAGS) $(INC) -c $< -o $@
 
 .PHONY: clean
 clean:

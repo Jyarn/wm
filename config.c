@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
 
 #include "config.h"
@@ -15,28 +16,31 @@ bool exit_wm (void* args UNUSED) {
 
 bool spawn (void* _args) {
     int i = fork ();
+
     if (i < 0)
         perror ("[ ERROR ]  unable to fork");
     else if (i)
         return true;
     else {
-        char* args = (char*)_args;
-        int nSpaces;
+        char args[strlen (_args)];
+        strcpy (args, _args);
+        int nSpaces = 0;
         // count number of spaces
-        for (nSpaces = 0; !args[nSpaces]; nSpaces++) {}
+        for (int i = 0; args[i]; i++)
+            nSpaces += args[i] == ' ';
 
-        char* pass[nSpaces+1];
-        int i = 0;
-        for (int j = 0; !args[j]; j++) {
+        char* pass[nSpaces+2];
+        int i = 1;
+        for (int j = 0; args[j]; j++) {
             if (args[j] == ' ') {
                 args[j] = '\0';
                 pass[i] = &args[j+1];
                 i++;
-                assert (i < nSpaces);
             }
         }
 
-        pass[nSpaces] = NULL;
+        pass[0] = args;
+        pass[nSpaces+1] = NULL;
         execvp (args, pass);
     }
 
@@ -45,7 +49,10 @@ bool spawn (void* _args) {
 
 
 const keyChord keyBinds[] = {
-    {.modifier = Mod4Mask | ShiftMask, .key = "e", .cmd = exit_wm   , .args = NULL},
-    {.modifier = Mod4Mask | ShiftMask, .key = "f", .cmd = spawn     , .args = "alacritty"},
-    {.modifier = Mod4Mask            , .key = "d", .cmd = spawn     , .args = "dmenu_run"}
+    {.modifier = Mod4Mask | ShiftMask, .key = "e"                   ,   .cmd = exit_wm   , .args = NULL},
+    {.modifier = Mod4Mask | ShiftMask, .key = "f"                   ,   .cmd = spawn     , .args = "alacritty"},
+    {.modifier = Mod4Mask            , .key = "d"                   ,   .cmd = spawn     , .args = "dmenu_run"},
+    {.modifier = AnyModifier         , .key = "XF86AudioRaiseVolume",   .cmd = spawn     , .args = "pactl set-sink-volume @DEFAULT_SINK@ +5%"},
+    {.modifier = AnyModifier         , .key = "XF86AudioLowerVolume",   .cmd = spawn     , .args = "pactl set-sink-volume @DEFAULT_SINK@ -5%"},
+    {.modifier = AnyModifier         , .key = "XF86AudioMute"       ,   .cmd = spawn     , .args = "pactl set-source-mute @DEFAULT_SOURCE@ toggle"}
 };

@@ -60,6 +60,11 @@ void wm_start (void) {
 
 
 int main (int argc, char** argv) {
+#ifdef __DEBUG__
+	volatile int a = 1;
+	while (a) { }
+#endif
+
 	wm_start ();
 	wm_grabInputs ();
 	wm_grabKeys (defaultScreen.root, GrabModeAsync);
