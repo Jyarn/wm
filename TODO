@@ -3,6 +3,7 @@ Window manager
  [ ] create event handler
  [ ] override Redirect Flag
  [ ] floating (tinywm-ish)
+ [ ] unbreak easyeffects (GTK/QT)
  [ ] tiling
  [ ] USE flags
  [ ] reparenting??

@@ -3,7 +3,7 @@ CFLAGS=-g -Wall
 FLAGS=
 EXE=wm
 
-OBJ=wm.o event.o
+OBJ=wm.o event.o config.o
 INC=-I/usr/include
 LIB=-lX11
 
