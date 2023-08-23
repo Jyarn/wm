@@ -1,0 +1,19 @@
+Window manager
+ [x] substructre redirection??
+ [ ] create event handler
+ [ ] override Redirect Flag
+ [ ] floating (tinywm-ish)
+ [ ] tiling
+ [ ] USE flags
+ [ ] reparenting??
+ [ ] compositing (xcomposite)
+ [ ] multiple workspaces
+ [ ] multi-monitor support (randr)
+ [ ] EWMH compliance
+ [ ] ICCM compliance
+ [ ] xkb??
+ [ ] replace xlib with xcb
+
+toolbar
+
+animated wallpaper

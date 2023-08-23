@@ -1,0 +1,5 @@
+*.o
+wm
+.vscode/**
+wm.log
+INFODUMP
