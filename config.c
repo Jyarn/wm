@@ -5,9 +5,8 @@
 #include <string.h>
 #include <assert.h>
 
+#include "util.h"
 #include "config.h"
-
-#define UNUSED __attribute__ ((unused))
 
 
 bool exit_wm (void* args UNUSED) {
@@ -50,9 +49,13 @@ bool spawn (void* _args) {
 
 const keyChord keyBinds[] = {
     {.modifier = Mod4Mask | ShiftMask, .key = "e"                   ,   .cmd = exit_wm   , .args = NULL},
-    {.modifier = Mod4Mask | ShiftMask, .key = "f"                   ,   .cmd = spawn     , .args = "alacritty"},
+    {.modifier = Mod4Mask | ShiftMask, .key = "Return"              ,   .cmd = spawn     , .args = "alacritty"},
     {.modifier = Mod4Mask            , .key = "d"                   ,   .cmd = spawn     , .args = "dmenu_run"},
     {.modifier = AnyModifier         , .key = "XF86AudioRaiseVolume",   .cmd = spawn     , .args = "pactl set-sink-volume @DEFAULT_SINK@ +5%"},
     {.modifier = AnyModifier         , .key = "XF86AudioLowerVolume",   .cmd = spawn     , .args = "pactl set-sink-volume @DEFAULT_SINK@ -5%"},
     {.modifier = AnyModifier         , .key = "XF86AudioMute"       ,   .cmd = spawn     , .args = "pactl set-source-mute @DEFAULT_SOURCE@ toggle"}
+};
+
+const mouseBind mouseBinds[] = {
+
 };

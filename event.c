@@ -1,5 +1,7 @@
 #include <X11/Xlib.h>
 #include <stdbool.h>
+#include <stdio.h>
+
 #include "event.h"
 #include "wm.h"
 #include "util.h"
@@ -24,30 +26,43 @@ bool onMapReq (XEvent* event) {
 	return true;
 }
 
-bool onCircReq (XEvent* event) {
+bool onCircReq (XEvent* event UNUSED) {
 	return true;
 }
 
-bool onWinConfig (XEvent* event) {
+bool onWinConfig (XEvent* event UNUSED) {
 	return true;
 }
 
+bool onCreate (XEvent* event) {
+	XCreateWindowEvent* ev = ((XCreateWindowEvent* )event);
+	if (wm_shouldbeManaged (ev->window))
+		wm_manage (ev->window);
+	return true;
+}
+
+bool onDestroy (XEvent* event) {
+	XDestroyWindowEvent* ev = (XDestroyWindowEvent* )event;
+	if (wm_shouldbeManaged (ev->window))
+		wm_unmanage (ev->window);
+	return true;
+}
 
 bool onKeyPress (XEvent* event) {
 	XKeyPressedEvent* ev = (XKeyPressedEvent* )event;
 	for (int i = 0; i < N_KEY_BINDS; i++)
-		if (ev->keycode == STR_TO_KEYSYM (keyBinds[i].key) && ALLOWMASK (ev->state) == ALLOWMASK (keyBinds[i].modifier)) {
+		if (ev->keycode == STR_TO_KEYSYM (keyBinds[i].key) && ev->state == keyBinds[i].modifier) {
 			return keyBinds[i].cmd (keyBinds[i].args);
 		}
 
 	return true;
 }
 
-bool onButtonPress (XEvent* event) {
+bool onButtonPress (XEvent* event UNUSED) {
 	return false;
 }
 
-bool onButtonRelease (XEvent* event) {
+bool onButtonRelease (XEvent* event UNUSED) {
 	return false;
 }
 

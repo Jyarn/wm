@@ -1,6 +1,6 @@
 CC=gcc
-CFLAGS=-g -Wall
-FLAGS=-D__DEBUG__
+CFLAGS=-g -Wall -Wextra -Wstrict-prototypes
+FLAGS=
 EXE=wm
 
 OBJ=wm.o event.o config.o
@@ -12,8 +12,10 @@ all: $(EXE)
 $(EXE): $(OBJ) config.h
 	$(CC) $(LIB) $(OBJ) -o $(EXE)
 
-%.o: %.c
+%.o: %.c %.h
 	$(CC) $(CFLAGS) $(FLAGS) $(INC) -c $< -o $@
+
+.PHONY: %.h
 
 .PHONY: clean
 clean:
