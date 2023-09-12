@@ -1,7 +1,15 @@
 Window manager
  [x] substructre redirection??
- [ ] create event handler
- [ ] override Redirect Flag
+ [x] create event handler
+ [_] window focus changing
+ [x] override Redirect Flag
+ [ ] logging
+  [ ] create error handler
+  [ ] assert
+  [x] basic logging
+ [ ] arg processing
+ [ ] moving windows
+ [ ] resizing windows
  [ ] floating (tinywm-ish)
  [ ] tiling
  [ ] USE flags
@@ -20,4 +28,9 @@ animated wallpaper
 
 ISSUES
  [ ] easyeffects window not appearing
- [ ] alacritty crashing the window manager
+      notes: not running, or slowing down execution seems to make it appear => event handler issue
+ [x] alacritty crashing the window manager
+      notes: no clue what happened but it got fixed. now whenever it crashes it doesn't give me any debug info :D
+ [ ] typing into (completley?) overlapped windows
+ [ ] memory leak at wm.c:204
+      notes: not closing log file

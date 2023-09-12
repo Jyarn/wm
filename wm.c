@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
+#include <string.h>
 
 #include "wm.h"
 #include "event.h"
@@ -21,7 +22,6 @@ void wm_grabKeys (Window win, int sync);
 void wm_start (void);
 void wm_cleanup (void);
 client* wm_fetchClient (Window w);
-
 
 
 
@@ -196,11 +196,17 @@ void wm_setFocus (Window w) {
 	}
 }
 
-int main (int argc UNUSED, char** argv UNUSED) {
+
+int main (int argc, char** argv) {
+	for (int i = 1; i < argc; i++) {
 #ifdef __DEBUG__
-	volatile int a = 1;
-	while (a) { }
+	if (strcmp (argv[i], "--debug") == 0) {
+		int a = 1;
+		while (a) {}
+	}
 #endif
+	}
+
 	wm_log = fopen ("/home/r3st/.repos/wm/wm.log", "w");
 	LOG ("[ INFO ]	wm starting\n");
 
@@ -210,5 +216,6 @@ int main (int argc UNUSED, char** argv UNUSED) {
 	evt_eventHandler ();
 	wm_cleanup ();
 	LOG ("[ INFO ]	normal exit");
+	fclose (wm_log);
 	return 0;
 }

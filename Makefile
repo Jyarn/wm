@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS=-g -Wall -Wextra -Wstrict-prototypes
-FLAGS=
+FLAGS=-D__DEBUG__
 EXE=wm
 
 OBJ=wm.o event.o config.o
