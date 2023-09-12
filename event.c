@@ -25,6 +25,7 @@ bool onMapReq (XEvent* event) {
 	XMapRequestEvent* ev = (XMapRequestEvent* )event;
 
 	wm_grabKeys (ev->window, GrabModeAsync);
+	wm_grabMouse (ev->window, GrabModeAsync);
 	XMapWindow (dpy, ev->window);
 	if (wm_shouldbeManaged (ev->window))
 		wm_manage (ev->window);
