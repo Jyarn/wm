@@ -3,4 +3,5 @@ wm
 .vscode/**
 wm.log
 wm.err
+*.log
 INFODUMP

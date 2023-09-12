@@ -3,7 +3,6 @@ Window manager
  [ ] create event handler
  [ ] override Redirect Flag
  [ ] floating (tinywm-ish)
- [ ] unbreak easyeffects (GTK/QT)
  [ ] tiling
  [ ] USE flags
  [ ] reparenting??
@@ -18,3 +17,7 @@ Window manager
 toolbar
 
 animated wallpaper
+
+ISSUES
+ [ ] easyeffects window not appearing
+ [ ] alacritty crashing the window manager

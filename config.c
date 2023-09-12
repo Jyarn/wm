@@ -5,15 +5,16 @@
 #include <string.h>
 #include <assert.h>
 
+#include "wm.h"
 #include "util.h"
 #include "config.h"
 
 
-bool exit_wm (void* args UNUSED) {
+bool exit_wm (void* args UNUSED, Window w UNUSED) {
     return false;
 }
 
-bool spawn (void* _args) {
+bool spawn (void* _args, Window w UNUSED) {
     int i = fork ();
 
     if (i < 0)
@@ -41,11 +42,16 @@ bool spawn (void* _args) {
         pass[0] = args;
         pass[nSpaces+1] = NULL;
         execvp (args, pass);
+        perror ("[ ERROR ]  execvp failed");
     }
 
     return false;
 }
 
+bool focus (void* args UNUSED, Window w) {
+    wm_setFocus (w);
+    return true;
+}
 
 const keyChord keyBinds[] = {
     {.modifier = Mod4Mask | ShiftMask, .key = "e"                   ,   .cmd = exit_wm   , .args = NULL},
@@ -57,5 +63,5 @@ const keyChord keyBinds[] = {
 };
 
 const mouseBind mouseBinds[] = {
-
+    {.modifier = AnyModifier, .buttons = Button1, .cmd = focus, .args = NULL }
 };

@@ -1,10 +1,11 @@
 #ifndef __CONFIG__H
 #define __CONFIG__H
 
+#include <X11/Xlib.h>
 #include <stdbool.h>
 
 #define N_KEY_BINDS 6
-#define N_MOUSE_BINDS 0
+#define N_MOUSE_BINDS 1
 
 /*
  * Specify length of chords (excluding modifiers).
@@ -14,7 +15,7 @@
  *  Ctrl-Alt-f    = length 2
 */
 
-typedef bool (*cmd)(void*);
+typedef bool (*cmd)(void*, Window);
 
 typedef struct {
     unsigned int modifier;
@@ -23,17 +24,10 @@ typedef struct {
     void* args;
 } keyChord;
 
-typedef enum {
-    ClickedOnWindow,
-    ClickOnRoot,
-    ClickedOnBar
-} clickLocation;
-
 typedef struct {
-    clickLocation where;        // Where the mouse should be to activate
-    bool isDragged;             // Should the mouse be dragged
     unsigned int modifier;
     unsigned int buttons;
+    bool isDragged;             // Should the mouse be dragged
     cmd cmd;
     void* args;
 } mouseBind;
