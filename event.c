@@ -6,6 +6,7 @@
 #include "wm.h"
 #include "util.h"
 #include "config.h"
+#include "debug.h"
 
 
 typedef bool (*handler)(XEvent*);
@@ -47,9 +48,9 @@ bool onCreate (XEvent* event) {
 
 bool onDestroy (XEvent* event) {
 	XDestroyWindowEvent* ev = (XDestroyWindowEvent* )event;
-	LOG ("[ INFO ]	destroy window event received\n");
+	dbg_log ("[ INFO ]	destroy window event received\n");
 	wm_unmanage (ev->window);
-	LOG (" [ INFO ] window destroyed\n");
+	dbg_log (" [ INFO ] window destroyed\n");
 	return true;
 }
 

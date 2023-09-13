@@ -3,7 +3,7 @@ CFLAGS=-g -Wall -Wextra -Wstrict-prototypes
 FLAGS=-D__DEBUG__
 EXE=wm
 
-OBJ=wm.o event.o config.o
+OBJ=wm.o event.o config.o debug.o
 INC=-I/usr/include
 LIB=-lX11
 

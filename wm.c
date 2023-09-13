@@ -9,6 +9,7 @@
 #include "event.h"
 #include "config.h"
 #include "util.h"
+#include "debug.h"
 
 Display* dpy;
 screen defaultScreen;
@@ -207,15 +208,15 @@ int main (int argc, char** argv) {
 #endif
 	}
 
-	wm_log = fopen ("/home/r3st/.repos/wm/wm.log", "w");
-	LOG ("[ INFO ]	wm starting\n");
+	dbg_init ();
+	dbg_log ("[ INFO ]	wm starting\n");
 
 	wm_start ();
 	wm_grabMouse (defaultScreen.root, GrabModeAsync);
 	wm_grabKeys (defaultScreen.root, GrabModeAsync);
 	evt_eventHandler ();
 	wm_cleanup ();
-	LOG ("[ INFO ]	normal exit");
-	fclose (wm_log);
+	dbg_log ("[ INFO ]	normal exit");
+	dbg_close ();
 	return 0;
 }
