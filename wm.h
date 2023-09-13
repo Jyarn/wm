@@ -8,7 +8,6 @@
 #define WIN_MASK KeyPressMask | ButtonPressMask
 #define MOUSE_MASK ButtonPressMask
 
-#define LOG(a) fprintf (wm_log , a); fflush(wm_log)
 
 typedef struct {
     int screen;
@@ -28,7 +27,6 @@ typedef struct s_client {
 
 extern Display* dpy;
 extern screen defaultScreen;
-extern FILE* wm_log;
 
 bool wm_shouldbeManaged (Window w);
 void wm_manage (Window w);

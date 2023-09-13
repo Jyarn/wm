@@ -140,31 +140,20 @@ void wm_manage (Window w) {
  * remove w from active client list
 */
 void wm_unmanage (Window w) {
-	if (activeClients == NULL)
-		return;
-	if (activeClients->window == w) {
-		client* cur = activeClients;
-		activeClients = cur->next;
-		free (cur);
-		return;
-	}
-	if (activeClients->next == NULL)
-		return;
+	client* cur = activeClients;
+	client* prev = NULL;
 
-	client* cur = activeClients->next->next;
-	client* prev = activeClients->next;
-
-	do {
+	while (cur) {
 		if (cur->window == w) {
-			// remove client from list
-			prev->next = cur->next;
+			if (prev)
+				prev->next = cur->next;
 			free (cur);
 			return;
 		}
 
 		prev = cur;
 		cur = cur->next;
-	} while (cur != NULL);
+	}
 }
 
 bool wm_killClient (void* args) {

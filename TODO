@@ -1,4 +1,4 @@
-Window manager
+[ ] Window manager
  [x] substructre redirection??
  [x] create event handler
  [_] window focus changing
@@ -26,11 +26,15 @@ toolbar
 
 animated wallpaper
 
+clickable desktop
+
 ISSUES
  [ ] easyeffects window not appearing
       notes: not running, or slowing down execution seems to make it appear => event handler issue
  [x] alacritty crashing the window manager
       notes: no clue what happened but it got fixed. now whenever it crashes it doesn't give me any debug info :D
- [ ] typing into (completley?) overlapped windows
- [ ] memory leak at wm.c:204
+ [x] typing into (completley?) overlapped windows
+      note: looks like it only breaks if easyeffects isn't running
+            segfault wm.c:158
+ [x] memory leak at wm.c:204
       notes: not closing log file
