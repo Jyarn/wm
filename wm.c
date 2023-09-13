@@ -132,7 +132,7 @@ void wm_manage (Window w) {
 	newClient->window = w;
 
 	// set event mask
-	//XSelectInput (dpy, w, ROOT_MASK);
+	XSelectInput (dpy, w, ROOT_MASK);
 	wm_grabMouse (w, GrabModeAsync);
 }
 

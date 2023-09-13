@@ -24,12 +24,14 @@ bool onButtonPress (XEvent* event);
 
 bool onMapReq (XEvent* event) {
 	XMapRequestEvent* ev = (XMapRequestEvent* )event;
-
-	wm_grabKeys (ev->window, GrabModeAsync);
-	wm_grabMouse (ev->window, GrabModeAsync);
-	XMapWindow (dpy, ev->window);
-	if (wm_shouldbeManaged (ev->window))
+	dbg_log ("[ INFO ] map request\n");
+	if (wm_shouldbeManaged (ev->window)) {
 		wm_manage (ev->window);
+		wm_grabKeys (ev->window, GrabModeAsync);
+		wm_grabMouse (ev->window, GrabModeAsync);
+		XMapWindow (dpy, ev->window);
+	}
+
 	return true;
 }
 
@@ -56,6 +58,7 @@ bool onDestroy (XEvent* event) {
 
 bool onUnmap (XEvent* event) {
 	XUnmapEvent* ev = (XUnmapEvent* )event;
+	dbg_log ("[ INFO ] unmap request\n");
 	wm_unmanage (ev->window);
 
 	return true;

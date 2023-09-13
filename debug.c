@@ -25,17 +25,6 @@ void dbg_close (void) {
 }
 
 int handlerUser (Display* dpy, XErrorEvent* event) {
-    switch (event->type) {
-        case BadAccess:
-            dbg_log ("[ ERROR ] Bad Access");
-            break;
-        case BadValue:
-            dbg_log ("[ Error ] Bad Value");
-            break;
-        case BadWindow:
-            dbg_log ("[ ERROR ] Bad Window");
-            break;
-    }
-
+    dbg_log ("[ ERROR ] Xerror\n");
     return handlerDefault (dpy, event);
 }
