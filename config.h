@@ -4,7 +4,7 @@
 #include <X11/Xlib.h>
 #include <stdbool.h>
 
-#define N_KEY_BINDS 6
+#define N_KEY_BINDS 7
 #define N_MOUSE_BINDS 1
 
 /*

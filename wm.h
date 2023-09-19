@@ -5,7 +5,7 @@
 #include <stdarg.h>
 
 #define ROOT_MASK SubstructureRedirectMask | SubstructureNotifyMask | KeyPressMask | ButtonPressMask
-#define WIN_MASK KeyPressMask | ButtonPressMask
+#define WIN_MASK StructureNotifyMask
 #define MOUSE_MASK ButtonPressMask
 
 
@@ -27,13 +27,15 @@ typedef struct s_client {
 
 extern Display* dpy;
 extern screen defaultScreen;
+extern client* wm_focus;
 
 bool wm_shouldbeManaged (Window w);
 void wm_manage (Window w);
 void wm_unmanage (Window w);
-bool wm_killClient (void* args);
+void wm_killClient (Window w);
 void wm_setFocus (Window w);
 void wm_grabKeys (Window win, int sync);
 void wm_grabMouse (Window win, int sync);
+void wm_ungrab (Window w);
 
 #endif

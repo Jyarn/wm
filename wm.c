@@ -14,9 +14,9 @@
 Display* dpy;
 screen defaultScreen;
 FILE* wm_log;
+client* wm_focus;
 
 static client* activeClients;
-static client* wm_focus;
 
 void wm_grabMouse (Window win, int sync);
 void wm_grabKeys (Window win, int sync);
@@ -108,6 +108,40 @@ void wm_grabMouse (Window win, int sync) {
 }
 
 /*
+ * Ungrab grabbed things from a window
+*/
+void wm_ungrab (Window w) {
+	/*
+		* https://stackoverflow.com/questions/44025639/how-can-i-check-in-xlib-if-window-exists
+
+		* Because X is asynchronous, there isn't a guarantee that the window would still exist
+		* between the time that you got the ID and the time you sent an event to the window or
+		* otherwise manipulated it. What you should do is send the event without checking, but
+		* install an error handler to catch any BadWindow errors, which would indicate that the
+		* window no longer exists. This scheme will work except on the [rare] occasion that the
+		* original window has been destroyed and its ID reallocated to another window.
+
+		* You can use this scheme to make a function which checks the validity of a window; you
+		* can make this operation almost synchronous by calling XSync() after the request,
+		* although there is still no guarantee that the window will exist after the result
+		* (unless the sterver is grabbed). On the 　whole, catching the error rather than pre-checking
+		* is preferable.
+
+		* life is pain
+	*/
+
+	XGrabServer (dpy);
+	dbg_log ("[ INFO ] wm_ungrab\n");
+	dbg_handlerOff (); // ignore xlib funny buissness
+	XSelectInput (dpy, w, NoEventMask);
+	XUngrabButton (dpy, AnyButton, AnyModifier, w);
+	XUngrabKey (dpy, AnyKey, AnyModifier, w);
+	XUngrabServer (dpy);
+	XSync (dpy, False);
+	dbg_handlerOn ();
+}
+
+/*
  * check if w should be managed (if override_redirect == true)
 */
 bool wm_shouldbeManaged (Window w) {
@@ -132,7 +166,7 @@ void wm_manage (Window w) {
 	newClient->window = w;
 
 	// set event mask
-	XSelectInput (dpy, w, ROOT_MASK);
+	XSelectInput (dpy, w, WIN_MASK);
 	wm_grabMouse (w, GrabModeAsync);
 }
 
@@ -147,6 +181,10 @@ void wm_unmanage (Window w) {
 		if (cur->window == w) {
 			if (prev)
 				prev->next = cur->next;
+			else
+				activeClients = cur->next;
+
+			dbg_log ("[ INFO ] wm_unmanage\n");
 			free (cur);
 			return;
 		}
@@ -156,17 +194,13 @@ void wm_unmanage (Window w) {
 	}
 }
 
-bool wm_killClient (void* args) {
-	Window w = (args ? *(Window* )args : wm_focus->window);
+void wm_killClient (Window w) {
 	if (w == (Window)defaultScreen.root)
-		return true;
+		return;
 
-	XGrabServer (dpy);
+	wm_unmanage (w);
 	XSetCloseDownMode (dpy, DestroyAll);
 	XKillClient (dpy, w);
-	XUngrabServer (dpy);
-	XSync (dpy, false);
-	return true; // return true so it can be used as key bind
 }
 
 void wm_setFocus (Window w) {
@@ -175,15 +209,7 @@ void wm_setFocus (Window w) {
 	if (w == (Window)defaultScreen.root)
 		return;
 
-	client* cur = activeClients;
-
-	while (cur) {
-		if (cur->window == w) {
-			wm_focus = cur;
-			return;
-		}
-		cur = cur->next;
-	}
+	wm_focus = wm_fetchClient (w);
 }
 
 
@@ -193,6 +219,7 @@ int main (int argc, char** argv) {
 	if (strcmp (argv[i], "--debug") == 0) {
 		int a = 1;
 		while (a) {}
+		dbg_handlerOn ();
 	}
 #endif
 	}

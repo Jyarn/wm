@@ -53,13 +53,19 @@ bool focus (void* args UNUSED, Window w) {
     return true;
 }
 
+bool killWindow (void* args UNUSED, Window w UNUSED) {
+    wm_killClient (wm_focus->window);
+    return true;
+}
+
 const keyChord keyBinds[] = {
     {.modifier = Mod4Mask | ShiftMask, .key = "e"                   ,   .cmd = exit_wm   , .args = NULL},
     {.modifier = Mod4Mask | ShiftMask, .key = "Return"              ,   .cmd = spawn     , .args = "alacritty"},
     {.modifier = Mod4Mask            , .key = "d"                   ,   .cmd = spawn     , .args = "dmenu_run"},
     {.modifier = AnyModifier         , .key = "XF86AudioRaiseVolume",   .cmd = spawn     , .args = "pactl set-sink-volume @DEFAULT_SINK@ +5%"},
     {.modifier = AnyModifier         , .key = "XF86AudioLowerVolume",   .cmd = spawn     , .args = "pactl set-sink-volume @DEFAULT_SINK@ -5%"},
-    {.modifier = AnyModifier         , .key = "XF86AudioMute"       ,   .cmd = spawn     , .args = "pactl set-source-mute @DEFAULT_SOURCE@ toggle"}
+    {.modifier = AnyModifier         , .key = "XF86AudioMute"       ,   .cmd = spawn     , .args = "pactl set-source-mute @DEFAULT_SOURCE@ toggle"},
+    {.modifier = Mod4Mask | ShiftMask, .key = "q"                   ,   .cmd = killWindow, .args = NULL}
 };
 
 const mouseBind mouseBinds[] = {

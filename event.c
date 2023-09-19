@@ -24,12 +24,13 @@ bool onButtonPress (XEvent* event);
 
 bool onMapReq (XEvent* event) {
 	XMapRequestEvent* ev = (XMapRequestEvent* )event;
-	dbg_log ("[ INFO ] map request\n");
+	dbg_log ("\n[ INFO ] map request\n");
 	if (wm_shouldbeManaged (ev->window)) {
 		wm_manage (ev->window);
 		wm_grabKeys (ev->window, GrabModeAsync);
 		wm_grabMouse (ev->window, GrabModeAsync);
 		XMapWindow (dpy, ev->window);
+		wm_setFocus (ev->window);
 	}
 
 	return true;
@@ -44,22 +45,21 @@ bool onWinConfig (XEvent* event UNUSED) {
 }
 
 bool onCreate (XEvent* event) {
-	XCreateWindowEvent* ev = ((XCreateWindowEvent* )event);
 	return true;
 }
 
 bool onDestroy (XEvent* event) {
 	XDestroyWindowEvent* ev = (XDestroyWindowEvent* )event;
-	dbg_log ("[ INFO ]	destroy window event received\n");
+	dbg_log ("\n[ INFO ] destroy window event received\n");
 	wm_unmanage (ev->window);
-	dbg_log (" [ INFO ] window destroyed\n");
 	return true;
 }
 
 bool onUnmap (XEvent* event) {
-	XUnmapEvent* ev = (XUnmapEvent* )event;
-	dbg_log ("[ INFO ] unmap request\n");
+	XUnmapEvent* ev = (XUnmapEvent* )&event->xunmap;
+	dbg_log ("\n[ INFO ] unmap request\n");
 	wm_unmanage (ev->window);
+	wm_ungrab (ev->window);
 
 	return true;
 }
