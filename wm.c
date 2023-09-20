@@ -18,11 +18,8 @@ client* wm_focus;
 
 static client* activeClients;
 
-void wm_grabMouse (Window win, int sync);
-void wm_grabKeys (Window win, int sync);
-void wm_start (void);
-void wm_cleanup (void);
-client* wm_fetchClient (Window w);
+void start_wm (void);
+void cleanup (void);
 
 
 
@@ -30,7 +27,7 @@ client* wm_fetchClient (Window w);
 /*
  * Initialize default screen, and set the event mask for the event mask
 */
-void wm_start (void) {
+void start_wm (void) {
 	activeClients = NULL;
 
 	// open connection to x1
@@ -51,7 +48,7 @@ void wm_start (void) {
 /*
  * free active clients
 */
-void wm_cleanup (void) {
+void cleanup (void) {
 	client* cur = activeClients;
 	client* prev = cur;
 
@@ -97,14 +94,31 @@ void wm_grabKeys (Window win, int sync) {
 void wm_grabMouse (Window win, int sync) {
 	XUngrabButton (dpy, AnyButton, AnyModifier, win);
 	for (int i = 0; i < N_MOUSE_BINDS; i++)
-		XGrabButton (dpy,
-		mouseBinds[i].buttons,
-		keyBinds[i].modifier,
-		win,
-		True,
-		MOUSE_MASK,
-		sync, GrabModeAsync,
-		None, None);
+		XGrabButton (
+			dpy,
+			mouseBinds[i].buttons,
+			mouseBinds[i].modifier,
+			win,
+			True,
+			MOUSE_MASK,
+			sync, GrabModeAsync,
+			None, None
+		);
+}
+
+void wm_grabPointer (Window win, int sync) {
+	XUngrabButton (dpy, AnyButton, AnyModifier, win);
+	for (int i = 0; i < N_MOVE_BINDS; i++)
+		XGrabButton (
+			dpy,
+			moveBinds[i].buttons,
+			moveBinds[i].modifier,
+			win,
+			True,
+			MOTION_MASK,
+			sync, GrabModeAsync,
+			None, None
+		);
 }
 
 /*
@@ -227,11 +241,11 @@ int main (int argc, char** argv) {
 	dbg_init ();
 	dbg_log ("[ INFO ]	wm starting\n");
 
-	wm_start ();
+	start_wm ();
 	wm_grabMouse (defaultScreen.root, GrabModeAsync);
 	wm_grabKeys (defaultScreen.root, GrabModeAsync);
 	evt_eventHandler ();
-	wm_cleanup ();
+	cleanup ();
 	dbg_log ("[ INFO ]	normal exit");
 	dbg_close ();
 	return 0;

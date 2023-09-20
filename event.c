@@ -8,12 +8,9 @@
 #include "config.h"
 #include "debug.h"
 
-
-typedef bool (*handler)(XEvent*);
 bool onMapReq (XEvent* event);
 bool onCircReq (XEvent* event);
 bool onWinConfig (XEvent* event);
-bool onCreate (XEvent* event);
 bool onDestroy (XEvent* event);
 bool onUnmap (XEvent* event);
 bool onKeyPress (XEvent* event);
@@ -29,6 +26,7 @@ bool onMapReq (XEvent* event) {
 		wm_manage (ev->window);
 		wm_grabKeys (ev->window, GrabModeAsync);
 		wm_grabMouse (ev->window, GrabModeAsync);
+		wm_grabPointer (ev->window, GrabModeAsync);
 		XMapWindow (dpy, ev->window);
 		wm_setFocus (ev->window);
 	}
@@ -41,10 +39,6 @@ bool onCircReq (XEvent* event UNUSED) {
 }
 
 bool onWinConfig (XEvent* event UNUSED) {
-	return true;
-}
-
-bool onCreate (XEvent* event) {
 	return true;
 }
 
@@ -77,9 +71,8 @@ bool onKeyPress (XEvent* event) {
 bool onButtonPress (XEvent* event) {
 	XButtonPressedEvent* ev = (XButtonPressedEvent* )event;
 	for (int i = 0; i < N_MOUSE_BINDS; i++) {
-		if (ev->button == mouseBinds[i].buttons && ev->state == mouseBinds[i].modifier) {
+		if (ev->button == mouseBinds[i].buttons && ev->state == mouseBinds[i].modifier)
 			return mouseBinds[i].cmd (mouseBinds[i].args, ev->window);
-		}
 	}
 
 	return true;
@@ -103,9 +96,6 @@ void evt_eventHandler (void) {
 				break;
 			case ConfigureRequest:
 				func = onWinConfig;
-				break;
-			case CreateNotify:
-				func = onCreate;
 				break;
 			case DestroyNotify:
 				func = onDestroy;

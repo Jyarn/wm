@@ -4,10 +4,10 @@
 #include <stdbool.h>
 #include <stdarg.h>
 
-#define ROOT_MASK SubstructureRedirectMask | SubstructureNotifyMask | KeyPressMask | ButtonPressMask
+#define ROOT_MASK SubstructureRedirectMask | SubstructureNotifyMask | KeyPressMask | ButtonPressMask | PointerMotionMask
 #define WIN_MASK StructureNotifyMask
 #define MOUSE_MASK ButtonPressMask
-
+#define MOTION_MASK MOUSE_MASK | PointerMotionMask
 
 typedef struct {
     int screen;
@@ -36,6 +36,8 @@ void wm_killClient (Window w);
 void wm_setFocus (Window w);
 void wm_grabKeys (Window win, int sync);
 void wm_grabMouse (Window win, int sync);
+void wm_setFocus (Window w);
 void wm_ungrab (Window w);
+client* wm_fetchClient (Window w);
 
 #endif

@@ -4,18 +4,14 @@
 #include <X11/Xlib.h>
 #include <stdbool.h>
 
-#define N_KEY_BINDS 7
-#define N_MOUSE_BINDS 1
+#include "event.h"
 
-/*
- * Specify length of chords (excluding modifiers).
- * Ex.
- *  Ctrl-f       = length 1
- *  f             = length 1
- *  Ctrl-Alt-f    = length 2
-*/
+#define N_KEY_BINDS 7
+#define N_MOUSE_BINDS 2
+#define N_MOVE_BINDS 1
 
 typedef bool (*cmd)(void*, Window);
+typedef bool (*pointerFunc)(void*, Window, XMotionEvent*, XMotionEvent*);
 
 typedef struct {
     unsigned int modifier;
@@ -27,12 +23,19 @@ typedef struct {
 typedef struct {
     unsigned int modifier;
     unsigned int buttons;
-    bool isDragged;             // Should the mouse be dragged
     cmd cmd;
     void* args;
 } mouseBind;
 
+typedef struct {
+    unsigned int modifier;
+    unsigned int buttons;
+    pointerFunc cmd;
+    void* args;
+} moveBind;
+
 extern const keyChord keyBinds[];
 extern const mouseBind mouseBinds[];
+extern const moveBind moveBinds[];
 
 #endif

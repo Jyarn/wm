@@ -58,6 +58,9 @@ bool killWindow (void* args UNUSED, Window w UNUSED) {
     return true;
 }
 
+bool moveWindow (XEvent* event) {
+    return true;
+}
 const keyChord keyBinds[] = {
     {.modifier = Mod4Mask | ShiftMask, .key = "e"                   ,   .cmd = exit_wm   , .args = NULL},
     {.modifier = Mod4Mask | ShiftMask, .key = "Return"              ,   .cmd = spawn     , .args = "alacritty"},
@@ -69,5 +72,9 @@ const keyChord keyBinds[] = {
 };
 
 const mouseBind mouseBinds[] = {
-    {.modifier = AnyModifier, .buttons = Button1, .cmd = focus, .args = NULL }
+    {.modifier = AnyModifier, .buttons = Button1, .cmd = focus  , .args = NULL }
+};
+
+const moveBind moveBinds[] = {
+    {.modifier = Mod4Mask, .buttons = Button1, .cmd = moveWindow, .args = NULL}
 };
