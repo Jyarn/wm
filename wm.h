@@ -17,8 +17,8 @@ typedef struct {
 } screen;
 
 typedef struct s_client {
-    int w;
-    int h;
+    unsigned int w;
+    unsigned int h;
     int x;
     int y;
     struct s_client* next;

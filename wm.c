@@ -176,12 +176,17 @@ void wm_manage (Window w) {
 	newClient->next = activeClients;
 	activeClients = newClient;
 
+	// fetch geometry of window
+	Window root;
+	unsigned int borderWidth, depth;
+
+	XGetGeometry (dpy, w, &root, &newClient->x, &newClient->y, &newClient->w, &newClient->h, &borderWidth, &depth);
+
 	// init new client
 	newClient->window = w;
 
 	// set event mask
 	XSelectInput (dpy, w, WIN_MASK);
-	wm_grabMouse (w, GrabModeAsync);
 }
 
 /*
