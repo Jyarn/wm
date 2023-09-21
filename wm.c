@@ -106,21 +106,6 @@ void wm_grabMouse (Window win, int sync) {
 		);
 }
 
-void wm_grabPointer (Window win, int sync) {
-	XUngrabButton (dpy, AnyButton, AnyModifier, win);
-	for (int i = 0; i < N_MOVE_BINDS; i++)
-		XGrabButton (
-			dpy,
-			moveBinds[i].buttons,
-			moveBinds[i].modifier,
-			win,
-			True,
-			MOTION_MASK,
-			sync, GrabModeAsync,
-			None, None
-		);
-}
-
 /*
  * Ungrab grabbed things from a window
 */

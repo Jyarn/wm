@@ -7,7 +7,10 @@
 #define ROOT_MASK SubstructureRedirectMask | SubstructureNotifyMask | KeyPressMask | ButtonPressMask | PointerMotionMask
 #define WIN_MASK StructureNotifyMask
 #define MOUSE_MASK ButtonPressMask
-#define MOTION_MASK MOUSE_MASK | PointerMotionMask
+#define MOTION_MASK PointerMotionMask
+
+#define WM_GRABPOINTER(win) XGrabPointer (dpy, win, False, MOTION_MASK, GrabModeAsync, GrabModeAsync, None, None, CurrentTime)
+#define WM_UNGRABPOINTER(win) XUngrabPointer (dpy, CurrentTime);
 
 typedef struct {
     int screen;

@@ -7,7 +7,7 @@
 #include "event.h"
 
 #define N_KEY_BINDS 7
-#define N_MOUSE_BINDS 2
+#define N_MOUSE_BINDS 1
 #define N_MOVE_BINDS 1
 
 typedef bool (*cmd)(void*, Window);

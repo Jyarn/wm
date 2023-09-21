@@ -8,6 +8,10 @@
 #include "config.h"
 #include "debug.h"
 
+
+static pointerFunc motionCmd = NULL;
+
+
 bool onMapReq (XEvent* event);
 bool onCircReq (XEvent* event);
 bool onWinConfig (XEvent* event);
@@ -15,6 +19,7 @@ bool onDestroy (XEvent* event);
 bool onUnmap (XEvent* event);
 bool onKeyPress (XEvent* event);
 bool onButtonPress (XEvent* event);
+bool onMotion (XEvent* event);
 
 
 
@@ -26,7 +31,6 @@ bool onMapReq (XEvent* event) {
 		wm_manage (ev->window);
 		wm_grabKeys (ev->window, GrabModeAsync);
 		wm_grabMouse (ev->window, GrabModeAsync);
-		wm_grabPointer (ev->window, GrabModeAsync);
 		XMapWindow (dpy, ev->window);
 		wm_setFocus (ev->window);
 	}
@@ -75,7 +79,20 @@ bool onButtonPress (XEvent* event) {
 			return mouseBinds[i].cmd (mouseBinds[i].args, ev->window);
 	}
 
+	for (int i = 0; i < N_MOVE_BINDS; i++) {
+		if (ev->button == moveBinds[i].buttons && ev->state == moveBinds[i].modifier) {
+			motionCmd = moveBinds[i].cmd;
+			WM_UNGRABPOINTER (ev->window);
+			WM_GRABPOINTER (ev->window);
+		}
+	}
 	return true;
+}
+
+bool onMotion (XEvent* event) {
+	if (!motionCmd)
+		return true;
+	return motionCmd (NULL, 0, NULL, NULL);
 }
 
 void evt_eventHandler (void) {
@@ -108,6 +125,9 @@ void evt_eventHandler (void) {
 				break;
 			case ButtonPress:
 				func = onButtonPress;
+				break;
+			case MotionNotify:
+				func = onMotion;
 				break;
 			default:
 				continue;

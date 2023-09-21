@@ -58,8 +58,8 @@ bool killWindow (void* args UNUSED, Window w UNUSED) {
     return true;
 }
 
-bool moveWindow (XEvent* event) {
-    return true;
+bool moveWindow (void* args, Window w, XMotionEvent* curEvent, XMotionEvent* prvEvent) {
+    return false;
 }
 const keyChord keyBinds[] = {
     {.modifier = Mod4Mask | ShiftMask, .key = "e"                   ,   .cmd = exit_wm   , .args = NULL},
