@@ -58,7 +58,7 @@ bool killWindow (void* args UNUSED, Window w UNUSED) {
     return true;
 }
 
-bool moveWindow (void* args, Window w, XMotionEvent* curEvent, XMotionEvent* prvEvent) {
+bool moveWindow (void* args, Window w, XMotionEvent* curEvent, XMotionEvent* prvEvent, bool* reset) {
     return false;
 }
 const keyChord keyBinds[] = {

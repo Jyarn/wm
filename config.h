@@ -11,7 +11,7 @@
 #define N_MOVE_BINDS 1
 
 typedef bool (*cmd)(void*, Window);
-typedef bool (*pointerFunc)(void*, Window, XMotionEvent*, XMotionEvent*);
+typedef bool (*pointerFunc)(void*, Window, XMotionEvent*, XMotionEvent*, bool*);
 
 typedef struct {
     unsigned int modifier;

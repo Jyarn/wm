@@ -8,6 +8,7 @@
 #define WIN_MASK StructureNotifyMask
 #define MOUSE_MASK ButtonPressMask
 #define MOTION_MASK PointerMotionMask
+#define IN_MOTION_MASK SubstructureRedirectMask | SubstructureNotifyMask | PointerMotionMask
 
 #define WM_GRABPOINTER(win) XGrabPointer (dpy, win, False, MOTION_MASK, GrabModeAsync, GrabModeAsync, None, None, CurrentTime)
 #define WM_UNGRABPOINTER(win) XUngrabPointer (dpy, CurrentTime);

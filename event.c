@@ -9,8 +9,8 @@
 #include "debug.h"
 
 
-static pointerFunc motionCmd = NULL;
-
+static moveBind* activeMotionBind = NULL;
+static XMotionEvent* prvEvent = NULL;
 
 bool onMapReq (XEvent* event);
 bool onCircReq (XEvent* event);
@@ -81,7 +81,11 @@ bool onButtonPress (XEvent* event) {
 
 	for (int i = 0; i < N_MOVE_BINDS; i++) {
 		if (ev->button == moveBinds[i].buttons && ev->state == moveBinds[i].modifier) {
-			motionCmd = moveBinds[i].cmd;
+			activeMotionBind = &moveBinds[i];
+			prvEvent = NULL;
+
+			// ungrab to stop key and button press processing
+			wm_ungrab (ev->window);
 			WM_UNGRABPOINTER (ev->window);
 			WM_GRABPOINTER (ev->window);
 		}
@@ -90,9 +94,23 @@ bool onButtonPress (XEvent* event) {
 }
 
 bool onMotion (XEvent* event) {
-	if (!motionCmd)
+	if (!activeMotionBind)
 		return true;
-	return motionCmd (NULL, 0, NULL, NULL);
+
+	XMotionEvent* curEvent = (XMotionEvent* )event;
+	bool reset = false;
+	bool ret = motionCmd (NULL, 0, NULL, NULL, &reset);
+
+	if (reset) {
+		wm_grabKeys (curEvent->window, GrabModeAsync);
+		wm_grabMouse (curEvent->window, GrabModeAsync);
+		WM_UNGRABPOINTER (curEvent->window);
+		activeMotionBind = NULL;
+	}
+	else
+		prvEvent = curEvent;
+
+	return ret;
 }
 
 void evt_eventHandler (void) {
