@@ -9,9 +9,10 @@
 #define N_KEY_BINDS 7
 #define N_MOUSE_BINDS 1
 #define N_MOVE_BINDS 1
+#define NOMODIFIER 0
 
 typedef bool (*cmd)(void*, Window);
-typedef bool (*pointerFunc)(void*, Window, XMotionEvent*, XMotionEvent*, bool*);
+typedef bool (*pointerFunc)(void*, MotionEvent*, bool*);
 
 typedef struct {
     unsigned int modifier;

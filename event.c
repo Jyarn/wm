@@ -9,8 +9,9 @@
 #include "debug.h"
 
 
-static moveBind* activeMotionBind = NULL;
-static XMotionEvent* prvEvent = NULL;
+static const moveBind* activeMotionBind = NULL;
+static MotionEvent motionEventData = DEFAULT_MOTION_EVENT;
+
 
 bool onMapReq (XEvent* event);
 bool onCircReq (XEvent* event);
@@ -82,12 +83,15 @@ bool onButtonPress (XEvent* event) {
 	for (int i = 0; i < N_MOVE_BINDS; i++) {
 		if (ev->button == moveBinds[i].buttons && ev->state == moveBinds[i].modifier) {
 			activeMotionBind = &moveBinds[i];
-			prvEvent = NULL;
+			motionEventData.x = 0;
+			motionEventData.y = 0;
+			motionEventData.firstCall = false;
+			motionEventData.w = ev->window;
 
-			// ungrab to stop key and button press processing
-			wm_ungrab (ev->window);
 			WM_UNGRABPOINTER (ev->window);
 			WM_GRABPOINTER (ev->window);
+
+			dbg_log ("[ INFO ] disabling key/mouse button handling\n");
 		}
 	}
 	return true;
@@ -99,17 +103,14 @@ bool onMotion (XEvent* event) {
 
 	XMotionEvent* curEvent = (XMotionEvent* )event;
 	bool reset = false;
-	bool ret = motionCmd (NULL, 0, NULL, NULL, &reset);
+	motionEventData.x = curEvent->x_root;
+	motionEventData.y = curEvent->y_root;
 
-	if (reset) {
-		wm_grabKeys (curEvent->window, GrabModeAsync);
-		wm_grabMouse (curEvent->window, GrabModeAsync);
-		WM_UNGRABPOINTER (curEvent->window);
+	bool ret = activeMotionBind->cmd (activeMotionBind->args, &motionEventData, &reset);
+	motionEventData.firstCall = true;
+
+	if (reset)
 		activeMotionBind = NULL;
-	}
-	else
-		prvEvent = curEvent;
-
 	return ret;
 }
 
@@ -139,10 +140,14 @@ void evt_eventHandler (void) {
 				func = onUnmap;
 				break;
 			case KeyPress:
-				func = onKeyPress;
+				func = activeMotionBind ? NULL : onKeyPress;
 				break;
 			case ButtonPress:
-				func = onButtonPress;
+				func = activeMotionBind ? NULL : onButtonPress;
+				break;
+			case ButtonRelease:
+				func = NULL;
+				activeMotionBind = NULL;
 				break;
 			case MotionNotify:
 				func = onMotion;
@@ -151,7 +156,7 @@ void evt_eventHandler (void) {
 				continue;
 		}
 
-		if (func (&event) == false)
+		if (func && func (&event) == false)
 			return;
 	}
 }

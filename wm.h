@@ -4,9 +4,9 @@
 #include <stdbool.h>
 #include <stdarg.h>
 
-#define ROOT_MASK SubstructureRedirectMask | SubstructureNotifyMask | KeyPressMask | ButtonPressMask | PointerMotionMask
+#define ROOT_MASK SubstructureRedirectMask | SubstructureNotifyMask | KeyPressMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask
 #define WIN_MASK StructureNotifyMask
-#define MOUSE_MASK ButtonPressMask
+#define MOUSE_MASK ButtonPressMask | ButtonReleaseMask
 #define MOTION_MASK PointerMotionMask
 #define IN_MOTION_MASK SubstructureRedirectMask | SubstructureNotifyMask | PointerMotionMask
 

@@ -106,6 +106,11 @@ void wm_grabMouse (Window win, int sync) {
 		);
 }
 
+
+void wm_grabPointerBinds (Window win, int sync) {
+
+}
+
 /*
  * Ungrab grabbed things from a window
 */

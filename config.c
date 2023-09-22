@@ -5,6 +5,7 @@
 #include <string.h>
 #include <assert.h>
 
+#include "debug.h"
 #include "wm.h"
 #include "util.h"
 #include "config.h"
@@ -58,8 +59,11 @@ bool killWindow (void* args UNUSED, Window w UNUSED) {
     return true;
 }
 
-bool moveWindow (void* args, Window w, XMotionEvent* curEvent, XMotionEvent* prvEvent, bool* reset) {
-    return false;
+bool moveWindow (void* args, MotionEvent* evt, bool* reset) {
+    char bff[54];
+    sprintf (bff, "[ INFO ] x: %d, y: %d\n", evt->x, evt->y);
+    dbg_log (bff);
+    return true;
 }
 const keyChord keyBinds[] = {
     {.modifier = Mod4Mask | ShiftMask, .key = "e"                   ,   .cmd = exit_wm   , .args = NULL},
@@ -72,7 +76,7 @@ const keyChord keyBinds[] = {
 };
 
 const mouseBind mouseBinds[] = {
-    {.modifier = AnyModifier, .buttons = Button1, .cmd = focus  , .args = NULL }
+    {.modifier = NOMODIFIER, .buttons = Button1, .cmd = focus  , .args = NULL }
 };
 
 const moveBind moveBinds[] = {
