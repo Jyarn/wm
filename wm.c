@@ -64,9 +64,10 @@ void cleanup (void) {
 
 void wm_moveWindow (Window w, int x, int y) {
 	client* cl;
-	if (defaultScreen.root == w || (cl = wm_fetchClient (w)) == NULL)
+	if (defaultScreen.root == w || (cl = wm_fetchClient (w)) == NULL) {
+		dbg_log ("[ INFO ] invalid window not moved\n");
 		return;
-
+	}
 	cl->x = x;
 	cl->y = y;
 	XMoveWindow (dpy, w, x, y);

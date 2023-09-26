@@ -21,9 +21,20 @@ bool onUnmap (XEvent* event);
 bool onKeyPress (XEvent* event);
 bool onButtonPress (XEvent* event);
 bool onMotion (XEvent* event);
+void motionExit (void);
 
 
 
+
+
+void motionExit (void) {
+	if (activeMotionBind == NULL)
+		return;
+
+	dbg_log ("[ INFO ] motion exit\n");
+	WM_UNGRABPOINTER (motionEventData.w);
+	activeMotionBind = NULL;
+}
 
 bool onMapReq (XEvent* event) {
 	XMapRequestEvent* ev = (XMapRequestEvent* )event;
@@ -67,9 +78,9 @@ bool onUnmap (XEvent* event) {
 bool onKeyPress (XEvent* event) {
 	XKeyPressedEvent* ev = (XKeyPressedEvent* )event;
 	for (int i = 0; i < N_KEY_BINDS; i++)
-		if (ev->keycode == STR_TO_KEYSYM (keyBinds[i].key) && ev->state == keyBinds[i].modifier) {
+		if (ev->keycode == STR_TO_KEYSYM (keyBinds[i].key) && ev->state == keyBinds[i].modifier)
 			return keyBinds[i].cmd (keyBinds[i].args, ev->window);
-		}
+
 
 	return true;
 }
@@ -83,17 +94,18 @@ bool onButtonPress (XEvent* event) {
 
 	for (int i = 0; i < N_MOVE_BINDS; i++) {
 		if (ev->button == moveBinds[i].buttons && ev->state == moveBinds[i].modifier) {
+			dbg_log ("[ INFO ] disabling key/mouse button handling\n");
+
+			if (WM_GRABPOINTER (ev->window) != GrabSuccess) {
+				dbg_log ("[ WARNING ] pointer grab failed\n");
+				return true;
+			}
+
 			activeMotionBind = &moveBinds[i];
 			motionEventData.x = 0;
 			motionEventData.y = 0;
 			motionEventData.firstCall = false;
 			motionEventData.w = ev->window;
-
-			WM_UNGRABPOINTER (ev->window);
-			WM_GRABPOINTER (ev->window);
-
-			XAllowEvents (dpy, SyncPointer, CurrentTime);
-			dbg_log ("[ INFO ] disabling key/mouse button handling\n");
 		}
 	}
 	return true;
@@ -112,7 +124,7 @@ bool onMotion (XEvent* event) {
 	motionEventData.firstCall = true;
 
 	if (reset)
-		activeMotionBind = NULL;
+		motionExit ();
 	return ret;
 }
 
@@ -151,7 +163,7 @@ void evt_eventHandler (void) {
 			case ButtonRelease:
 				dbg_log ("[ INFO ] button release\n");
 				func = NULL;
-				activeMotionBind = NULL;
+				motionExit ();
 				break;
 			case MotionNotify:
 				func = onMotion;
