@@ -106,9 +106,21 @@ void wm_grabMouse (Window win, int sync) {
 		);
 }
 
-
+/*
+ * Grab all mouse/key bindings for the ones in moveBinds
+*/
 void wm_grabPointerBinds (Window win, int sync) {
-
+	for (int i = 0; i < N_MOVE_BINDS; i++)
+		XGrabButton (
+			dpy,
+			moveBinds[i].buttons,
+			moveBinds[i].modifier,
+			win,
+			True,
+			MOUSE_MASK | ButtonReleaseMask,
+			sync, GrabModeAsync,
+			None, None
+		);
 }
 
 /*

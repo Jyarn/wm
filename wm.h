@@ -4,13 +4,13 @@
 #include <stdbool.h>
 #include <stdarg.h>
 
-#define ROOT_MASK SubstructureRedirectMask | SubstructureNotifyMask | KeyPressMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask
+#define ROOT_MASK SubstructureRedirectMask | SubstructureNotifyMask | KeyPressMask | ButtonPressMask | PointerMotionMask
 #define WIN_MASK StructureNotifyMask
-#define MOUSE_MASK ButtonPressMask | ButtonReleaseMask
-#define MOTION_MASK PointerMotionMask
+#define MOUSE_MASK ButtonPressMask
+#define MOTION_MASK PointerMotionMask | ButtonPressMask | ButtonReleaseMask
 #define IN_MOTION_MASK SubstructureRedirectMask | SubstructureNotifyMask | PointerMotionMask
 
-#define WM_GRABPOINTER(win) XGrabPointer (dpy, win, False, MOTION_MASK, GrabModeAsync, GrabModeAsync, None, None, CurrentTime)
+#define WM_GRABPOINTER(win) XGrabPointer (dpy, defaultScreen.root, False, MOTION_MASK, GrabModeAsync, GrabModeAsync, None, None, CurrentTime)
 #define WM_UNGRABPOINTER(win) XUngrabPointer (dpy, CurrentTime);
 
 typedef struct {
@@ -40,6 +40,7 @@ void wm_killClient (Window w);
 void wm_setFocus (Window w);
 void wm_grabKeys (Window win, int sync);
 void wm_grabMouse (Window win, int sync);
+void wm_grabPointerBinds (Window win, int sync);
 void wm_setFocus (Window w);
 void wm_ungrab (Window w);
 client* wm_fetchClient (Window w);

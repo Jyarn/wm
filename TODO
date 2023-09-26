@@ -44,3 +44,6 @@ ISSUES
              On laptop, wm doesn't even start I assume this is the same issue
              On laptop, changing the mask in wm_manage to the one used in dwm seems to fix the issue
  [x] Closing alacritty causes a BadWindow
+ [x] dragging stops X from sending events to client D:
+      notes:
+          jesus christ finally fixed it

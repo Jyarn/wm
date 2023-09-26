@@ -32,6 +32,7 @@ bool onMapReq (XEvent* event) {
 		wm_manage (ev->window);
 		wm_grabKeys (ev->window, GrabModeAsync);
 		wm_grabMouse (ev->window, GrabModeAsync);
+		wm_grabPointerBinds (ev->window, GrabModeAsync);
 		XMapWindow (dpy, ev->window);
 		wm_setFocus (ev->window);
 	}
@@ -91,6 +92,7 @@ bool onButtonPress (XEvent* event) {
 			WM_UNGRABPOINTER (ev->window);
 			WM_GRABPOINTER (ev->window);
 
+			XAllowEvents (dpy, SyncPointer, CurrentTime);
 			dbg_log ("[ INFO ] disabling key/mouse button handling\n");
 		}
 	}
@@ -143,6 +145,7 @@ void evt_eventHandler (void) {
 				func = activeMotionBind ? NULL : onKeyPress;
 				break;
 			case ButtonPress:
+				dbg_log ("[ INFO ] button press\n");
 				func = activeMotionBind ? NULL : onButtonPress;
 				break;
 			case ButtonRelease:
@@ -156,7 +159,10 @@ void evt_eventHandler (void) {
 				continue;
 		}
 
-		if (func && func (&event) == false)
+		if (!func)
+			continue;
+
+		if (func (&event) == false)
 			return;
 	}
 }
