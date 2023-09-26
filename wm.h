@@ -33,16 +33,17 @@ extern Display* dpy;
 extern screen defaultScreen;
 extern client* wm_focus;
 
-bool wm_shouldbeManaged (Window w);
-void wm_manage (Window w);
-void wm_unmanage (Window w);
-void wm_killClient (Window w);
-void wm_setFocus (Window w);
-void wm_grabKeys (Window win, int sync);
-void wm_grabMouse (Window win, int sync);
-void wm_grabPointerBinds (Window win, int sync);
-void wm_setFocus (Window w);
-void wm_ungrab (Window w);
-client* wm_fetchClient (Window w);
+bool wm_shouldbeManaged (Window);
+void wm_manage (Window);
+void wm_unmanage (Window);
+void wm_killClient (Window);
+void wm_setFocus (Window);
+void wm_grabKeys (Window, int);
+void wm_grabMouse (Window, int);
+void wm_grabPointerBinds (Window, int);
+void wm_setFocus (Window);
+void wm_ungrab (Window);
+void wm_moveWindow (Window, int, int);
+client* wm_fetchClient (Window);
 
 #endif

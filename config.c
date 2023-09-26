@@ -60,9 +60,7 @@ bool killWindow (void* args UNUSED, Window w UNUSED) {
 }
 
 bool moveWindow (void* args, MotionEvent* evt, bool* reset) {
-    char bff[54];
-    sprintf (bff, "[ INFO ] x: %d, y: %d\n", evt->x, evt->y);
-    dbg_log (bff);
+    wm_moveWindow (evt->w, evt->x, evt->y);
     return true;
 }
 const keyChord keyBinds[] = {

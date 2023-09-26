@@ -1,15 +1,15 @@
 [ ] Window manager
  [x] substructre redirection??
  [x] create event handler
- [_] window focus changing
+ [x] window focus changing
  [x] override Redirect Flag
- [ ] logging
+ [x] logging
   [x] create error handler
   [ ] assert
   [x] basic logging
  [x] arg processing
  [ ] floating (tinywm-ish)
-  [ ] moving windows
+  [_] moving windows
   [ ] resizing windows
  [ ] tiling
  [ ] USE flags
@@ -20,16 +20,17 @@
  [ ] multi-monitor support (randr)
  [ ] EWMH compliance
  [ ] ICCM compliance
- [ ] xkb??
+ [ ] key chording
+  [ ] replace input handling with xkb (probably not)
  [ ] replace xlib with xcb
 
 toolbar
 
 animated wallpaper
 
-clickable desktop
+clickable desktop icons (kind of like windows)
 
-ISSUES
+ISSUES:
  [ ] easyeffects window not appearing
       notes: not running, or slowing down execution seems to make it appear => event handler issue
  [x] alacritty crashing the window manager
@@ -39,7 +40,7 @@ ISSUES
             segfault wm.c:158
  [x] memory leak at wm.c:204
       notes: not closing log file
- [_] Enabling XSelectInput for newly managed windows causes a BadAccess error when opening alacritty
+ [x] Enabling XSelectInput for newly managed windows causes a BadAccess error when opening alacritty
       notes: it looks like the error is coming from XNextEvent instead of XSelectInput which is weird (need to verify on desktop)
              On laptop, wm doesn't even start I assume this is the same issue
              On laptop, changing the mask in wm_manage to the one used in dwm seems to fix the issue
@@ -47,3 +48,9 @@ ISSUES
  [x] dragging stops X from sending events to client D:
       notes:
           jesus christ finally fixed it
+ [ ] only able to move a window once, after which motion handler doesn't seem to receive events
+      notes:
+          cleanup is not always run before if a motion func does not reset
+ [ ] movewindow warps the top left corner of the window to the mouse
+      notes:
+          it looks funny

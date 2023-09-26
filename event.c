@@ -149,6 +149,7 @@ void evt_eventHandler (void) {
 				func = activeMotionBind ? NULL : onButtonPress;
 				break;
 			case ButtonRelease:
+				dbg_log ("[ INFO ] button release\n");
 				func = NULL;
 				activeMotionBind = NULL;
 				break;
