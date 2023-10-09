@@ -104,6 +104,8 @@ bool onButtonPress (XEvent* event) {
 			activeMotionBind = &moveBinds[i];
 			motionEventData.x = 0;
 			motionEventData.y = 0;
+			motionEventData.prevX = 0;
+			motionEventData.prevY = 0;
 			motionEventData.firstCall = false;
 			motionEventData.w = ev->window;
 		}
@@ -116,15 +118,13 @@ bool onMotion (XEvent* event) {
 		return true;
 
 	XMotionEvent* curEvent = (XMotionEvent* )event;
-	bool reset = false;
 	motionEventData.x = curEvent->x_root;
 	motionEventData.y = curEvent->y_root;
 
-	bool ret = activeMotionBind->cmd (activeMotionBind->args, &motionEventData, &reset);
-	motionEventData.firstCall = true;
+	bool ret = activeMotionBind->cmd (activeMotionBind->args, &motionEventData);
 
-	if (reset)
-		motionExit ();
+	motionEventData.prevX = motionEventData.x;
+	motionEventData.prevY = motionEventData.y;
 	return ret;
 }
 

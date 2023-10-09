@@ -62,12 +62,12 @@ void cleanup (void) {
 	XCloseDisplay (dpy);
 }
 
-void wm_moveWindow (Window w, int x, int y) {
-	client* cl;
-	if (defaultScreen.root == w || (cl = wm_fetchClient (w)) == NULL) {
+void wm_moveWindow (client* cl, int x, int y) {
+	if (defaultScreen.root == cl->window) {
 		dbg_log ("[ INFO ] invalid window not moved\n");
 		return;
 	}
+
 	cl->x = x;
 	cl->y = y;
 	XMoveWindow (dpy, w, x, y);

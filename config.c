@@ -59,8 +59,10 @@ bool killWindow (void* args UNUSED, Window w UNUSED) {
     return true;
 }
 
-bool moveWindow (void* args, MotionEvent* evt, bool* reset) {
-    wm_moveWindow (evt->w, evt->x, evt->y);
+bool moveWindow (void* args, MotionEvent* evt) {
+    client* cl = wm_fetchClient (evt->w);
+    if (cl != NULL)
+        wm_moveWindow (cl, evt->x, evt->y);
     return true;
 }
 const keyChord keyBinds[] = {

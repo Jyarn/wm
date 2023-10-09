@@ -48,7 +48,7 @@ ISSUES:
  [x] dragging stops X from sending events to client D:
       notes:
           jesus christ finally fixed it
- [ ] only able to move a window once, after which motion handler doesn't seem to receive events
+ [x] only able to move a window once, after which motion handler doesn't seem to receive events
       notes:
           cleanup is not always run before if a motion func does not reset
  [ ] movewindow warps the top left corner of the window to the mouse

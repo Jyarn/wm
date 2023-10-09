@@ -43,7 +43,7 @@ void wm_grabMouse (Window, int);
 void wm_grabPointerBinds (Window, int);
 void wm_setFocus (Window);
 void wm_ungrab (Window);
-void wm_moveWindow (Window, int, int);
+void wm_moveWindow (client*, int, int);
 client* wm_fetchClient (Window);
 
 #endif

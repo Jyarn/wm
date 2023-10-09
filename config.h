@@ -12,7 +12,7 @@
 #define NOMODIFIER 0
 
 typedef bool (*cmd)(void*, Window);
-typedef bool (*pointerFunc)(void*, MotionEvent*, bool*);
+typedef bool (*pointerFunc)(void*, MotionEvent*);
 
 typedef struct {
     unsigned int modifier;
