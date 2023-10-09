@@ -10,7 +10,7 @@
 
 
 static const moveBind* activeMotionBind = NULL;
-static MotionEvent motionEventData = DEFAULT_MOTION_EVENT;
+static MotionEvent motionEventData = { 0, false, 0, 0, 0, 0 };
 
 
 bool onMapReq (XEvent* event);
@@ -38,11 +38,12 @@ void motionExit (void) {
 
 bool onMapReq (XEvent* event) {
 	XMapRequestEvent* ev = (XMapRequestEvent* )event;
-	dbg_log ("\n[ INFO ] map request\n");
+	dbg_log ("\n[ INFO ] map request %d\n", ev->window);
+
 	if (wm_shouldbeManaged (ev->window)) {
 		wm_manage (ev->window);
 		wm_grabKeys (ev->window, GrabModeAsync);
-		wm_grabMouse (ev->window, GrabModeAsync);
+		wm_grabMouse (ev->window, GrabModeSync);
 		wm_grabPointerBinds (ev->window, GrabModeAsync);
 		XMapWindow (dpy, ev->window);
 		wm_setFocus (ev->window);
@@ -94,7 +95,7 @@ bool onButtonPress (XEvent* event) {
 
 	for (int i = 0; i < N_MOVE_BINDS; i++) {
 		if (ev->button == moveBinds[i].buttons && ev->state == moveBinds[i].modifier) {
-			dbg_log ("[ INFO ] disabling key/mouse button handling\n");
+			dbg_log ("[ INFO ] disabling key/mouse button handling %d\n", ev->window);
 
 			if (WM_GRABPOINTER (ev->window) != GrabSuccess) {
 				dbg_log ("[ WARNING ] pointer grab failed\n");

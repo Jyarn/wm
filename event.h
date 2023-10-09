@@ -3,7 +3,6 @@
 
 #include <X11/Xlib.h>
 
-#define DEFAULT_MOTION_EVENT { 0, false, 0, 0 }
 
 typedef struct {
     Window w;

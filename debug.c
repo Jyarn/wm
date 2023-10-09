@@ -2,6 +2,7 @@
 #include <X11/Xlib.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdarg.h>
 
 #include "debug.h"
 #include "util.h"
@@ -14,8 +15,11 @@ static XErrorHandler handlerDefault = NULL;
 int handlerUser (Display*, XErrorEvent*);
 int handlerIgnore (Display*, XErrorEvent*);
 
-void dbg_log (const char* str) {
-    fprintf (logFile, str);
+void dbg_log (const char* str, ...) {
+    va_list args;
+    va_start (args, str);
+
+    vfprintf (logFile, str, args);
     fflush (logFile);
 }
 
@@ -44,10 +48,10 @@ int handlerOff (Display* dsp, XErrorEvent* event) {
 
 void dbg_handlerOn (void) {
     XSetErrorHandler (handlerUser);
-    fprintf (logFile, "[ INFO ] handler on\n");
+    dbg_log ("[ INFO ] handler on\n");
 }
 
 void dbg_handlerOff (void) {
     XSetErrorHandler (handlerOff);
-    fprintf (logFile, "[ INFO ] handler off\n");
+    dbg_log ("[ INFO ] handler off\n");
 }

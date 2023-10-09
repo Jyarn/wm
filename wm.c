@@ -63,14 +63,14 @@ void cleanup (void) {
 }
 
 void wm_moveWindow (client* cl, int x, int y) {
-	if (defaultScreen.root == cl->window) {
+	if (cl == NULL && defaultScreen.root == cl->window) {
 		dbg_log ("[ INFO ] invalid window not moved\n");
 		return;
 	}
 
 	cl->x = x;
 	cl->y = y;
-	XMoveWindow (dpy, w, x, y);
+	XMoveWindow (dpy, cl->window, x, y);
 }
 
 client* wm_fetchClient (Window w) {
@@ -110,9 +110,9 @@ void wm_grabMouse (Window win, int sync) {
 			mouseBinds[i].buttons,
 			mouseBinds[i].modifier,
 			win,
-			True,
+			False,
 			MOUSE_MASK,
-			sync, GrabModeAsync,
+			GrabModeAsync, GrabModeAsync,
 			None, None
 		);
 }
@@ -130,7 +130,7 @@ void wm_grabPointerBinds (Window win, int sync) {
 			True,
 			MOUSE_MASK | ButtonReleaseMask,
 			sync, GrabModeAsync,
-			None, None
+			win, None
 		);
 }
 
@@ -173,6 +173,8 @@ void wm_ungrab (Window w) {
 */
 bool wm_shouldbeManaged (Window w) {
 	XWindowAttributes attrib;
+	if (w == (Window)defaultScreen.root)
+		return false;
 	if (!XGetWindowAttributes (dpy, w, &attrib) || attrib.override_redirect)
 		return false;
 	return true;
@@ -184,6 +186,8 @@ bool wm_shouldbeManaged (Window w) {
 void wm_manage (Window w) {
 	if (wm_fetchClient (w)) // check if window is unmanaged
 		return;
+
+	dbg_log ("[ INFO ] managing window %d\n", w);
 	// attach new Client to list
 	client* newClient = malloc (sizeof (client));
 	newClient->next = activeClients;
@@ -233,6 +237,7 @@ void wm_killClient (Window w) {
 	wm_unmanage (w);
 	XSetCloseDownMode (dpy, DestroyAll);
 	XKillClient (dpy, w);
+	wm_focus = NULL;
 }
 
 void wm_setFocus (Window w) {
@@ -242,10 +247,16 @@ void wm_setFocus (Window w) {
 		return;
 
 	wm_focus = wm_fetchClient (w);
+	if (wm_focus == NULL)
+		dbg_log ("[ INFO ] invalid window\n");
+	dbg_log ("[ INFO ] focus is %d\n", wm_focus->window);
 }
 
 
 int main (int argc, char** argv) {
+	dbg_init ();
+	dbg_log ("[ INFO ]	wm starting\n");
+
 	for (int i = 1; i < argc; i++) {
 #ifdef __DEBUG__
 	if (strcmp (argv[i], "--debug") == 0) {
@@ -256,15 +267,12 @@ int main (int argc, char** argv) {
 #endif
 	}
 
-	dbg_init ();
-	dbg_log ("[ INFO ]	wm starting\n");
 
 	start_wm ();
-	wm_grabMouse (defaultScreen.root, GrabModeAsync);
-	wm_grabKeys (defaultScreen.root, GrabModeAsync);
+	dbg_log ("[ INFO ] root = %d\n", defaultScreen.root);
 	evt_eventHandler ();
 	cleanup ();
-	dbg_log ("[ INFO ]	normal exit");
+	dbg_log ("[ INFO ] normal exit");
 	dbg_close ();
 	return 0;
 }

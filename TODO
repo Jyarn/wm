@@ -5,7 +5,6 @@
  [x] override Redirect Flag
  [x] logging
   [x] create error handler
-  [ ] assert
   [x] basic logging
  [x] arg processing
  [ ] floating (tinywm-ish)
@@ -54,3 +53,5 @@ ISSUES:
  [ ] movewindow warps the top left corner of the window to the mouse
       notes:
           it looks funny
+ [x] button presses do not register for certain windows
+     notes: changed grabmode in grabMouse to Sync

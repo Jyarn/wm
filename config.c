@@ -50,16 +50,19 @@ bool spawn (void* _args, Window w UNUSED) {
 }
 
 bool focus (void* args UNUSED, Window w) {
+    dbg_log ("[ INFO ] focus window %d\n", w);
     wm_setFocus (w);
     return true;
 }
 
-bool killWindow (void* args UNUSED, Window w UNUSED) {
-    wm_killClient (wm_focus->window);
+bool killWindow (void* args UNUSED, Window w UNUSED)  {
+    if (wm_focus)
+        wm_killClient (wm_focus->window);
+
     return true;
 }
 
-bool moveWindow (void* args, MotionEvent* evt) {
+bool moveWindow (void* args UNUSED, MotionEvent* evt) {
     client* cl = wm_fetchClient (evt->w);
     if (cl != NULL)
         wm_moveWindow (cl, evt->x, evt->y);
