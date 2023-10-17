@@ -8,10 +8,10 @@ typedef struct {
     Window w;
     bool firstCall;
 
-    int x;
-    int y;
-    int prevX;
-    int prevY;
+    unsigned int x;
+    unsigned int y;
+    unsigned int prevX;
+    unsigned int prevY;
 
 } MotionEvent;
 

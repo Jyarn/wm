@@ -9,10 +9,10 @@ LIB=-lX11
 
 all: $(EXE)
 
-$(EXE): $(OBJ) config.h
+$(EXE): $(OBJ)
 	$(CC) $(LIB) $(OBJ) -o $(EXE)
 
-%.o: %.c %.h
+%.o: %.c *.h
 	$(CC) $(CFLAGS) $(FLAGS) $(INC) -c $< -o $@
 
 .PHONY: %.h

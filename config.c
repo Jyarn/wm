@@ -63,11 +63,42 @@ bool killWindow (void* args UNUSED, Window w UNUSED)  {
 }
 
 bool moveWindow (void* args UNUSED, MotionEvent* evt) {
-    client* cl = wm_fetchClient (evt->w);
+    if (evt->firstCall)
+        return true;
+
+    Client* cl = wm_fetchClient (evt->w);
     if (cl != NULL)
-        wm_moveWindow (cl, evt->x, evt->y);
+        wm_moveWindow (cl, cl->x + evt->x - evt->prevX, cl->y + evt->y - evt->prevY);
     return true;
 }
+
+bool resizeWindow (void* args UNUSED, MotionEvent* evt) {
+    Client* cl = wm_fetchClient (evt->w);
+    if (!cl)
+        return true;
+
+    static unsigned int wX;
+    static unsigned int wY;
+    if (evt->firstCall) {
+        wX = (evt->x*2 > cl->x + cl->w) ? cl->w+cl->x : (unsigned int)cl->x;
+        wY = (evt->y*2 > cl->y + cl->h) ? cl->h+cl->y : (unsigned int)cl->y;
+        evt->prevX = wX;
+        evt->prevY = wY;
+
+        XWarpPointer (dpy, defaultScreen.root, None, 0, 0, 0, 0, wX-evt->x, wY-evt->y);
+        return true;
+    }
+    else {
+        wX += evt->x-evt->prevX;
+        wY += evt->y-evt->prevY;
+        cl->w = wX;
+        cl->h = wY;
+        XResizeWindow (dpy, evt->w, wX, wY);
+    }
+
+    return true;
+}
+
 const keyChord keyBinds[] = {
     {.modifier = Mod4Mask | ShiftMask, .key = "e"                   ,   .cmd = exit_wm   , .args = NULL},
     {.modifier = Mod4Mask | ShiftMask, .key = "Return"              ,   .cmd = spawn     , .args = "alacritty"},
@@ -83,5 +114,6 @@ const mouseBind mouseBinds[] = {
 };
 
 const moveBind moveBinds[] = {
-    {.modifier = Mod4Mask, .buttons = Button1, .cmd = moveWindow, .args = NULL}
+    {.modifier = Mod4Mask            , .buttons = Button1, .cmd = moveWindow  , .args = NULL},
+    {.modifier = Mod4Mask | ShiftMask, .buttons = Button1, .cmd = resizeWindow, .args = NULL}
 };

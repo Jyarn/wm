@@ -8,7 +8,7 @@
 
 #define N_KEY_BINDS 7
 #define N_MOUSE_BINDS 1
-#define N_MOVE_BINDS 1
+#define N_MOVE_BINDS 2
 #define NOMODIFIER 0
 
 typedef bool (*cmd)(void*, Window);

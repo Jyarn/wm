@@ -11,6 +11,17 @@
 
 static const moveBind* activeMotionBind = NULL;
 static MotionEvent motionEventData = { 0, false, 0, 0, 0, 0 };
+bool run = true;
+handler evt_handlers[LASTEvent] = {
+	[MapRequest] = onMapReq,
+	[CirculateRequest] = onCircReq,
+	[ConfigureRequest] = onWinConfig,
+	[DestroyNotify] = onDestroy,
+	[UnmapNotify] = onUnmap,
+	[KeyPress] = onKeyPress,
+	[ButtonPress] = onButtonPress
+};
+
 
 
 bool onMapReq (XEvent* event);
@@ -20,14 +31,12 @@ bool onDestroy (XEvent* event);
 bool onUnmap (XEvent* event);
 bool onKeyPress (XEvent* event);
 bool onButtonPress (XEvent* event);
-bool onMotion (XEvent* event);
-void motionExit (void);
 
 
 
 
-
-void motionExit (void) {
+void
+motionExit (void) {
 	if (activeMotionBind == NULL)
 		return;
 
@@ -36,38 +45,43 @@ void motionExit (void) {
 	activeMotionBind = NULL;
 }
 
-bool onMapReq (XEvent* event) {
+bool
+onMapReq (XEvent* event) {
 	XMapRequestEvent* ev = (XMapRequestEvent* )event;
 	dbg_log ("\n[ INFO ] map request %d\n", ev->window);
 
 	if (wm_shouldbeManaged (ev->window)) {
-		wm_manage (ev->window);
-		wm_grabKeys (ev->window, GrabModeAsync);
-		wm_grabMouse (ev->window, GrabModeSync);
-		wm_grabPointerBinds (ev->window, GrabModeAsync);
-		XMapWindow (dpy, ev->window);
-		wm_setFocus (ev->window);
-	}
+			wm_manage (ev->window);
+			wm_grabKeys (ev->window);
+			wm_grabMouse (ev->window);
+			wm_grabPointerBinds (ev->window);
+			XMapWindow (dpy, ev->window);
+			wm_setFocus (ev->window);
+		}
 
 	return true;
 }
 
-bool onCircReq (XEvent* event UNUSED) {
+bool
+onCircReq (XEvent* event UNUSED) {
 	return true;
 }
 
-bool onWinConfig (XEvent* event UNUSED) {
+bool
+onWinConfig (XEvent* event UNUSED) {
 	return true;
 }
 
-bool onDestroy (XEvent* event) {
+bool
+onDestroy (XEvent* event) {
 	XDestroyWindowEvent* ev = (XDestroyWindowEvent* )event;
 	dbg_log ("\n[ INFO ] destroy window event received\n");
 	wm_unmanage (ev->window);
 	return true;
 }
 
-bool onUnmap (XEvent* event) {
+bool
+onUnmap (XEvent* event) {
 	XUnmapEvent* ev = (XUnmapEvent* )&event->xunmap;
 	dbg_log ("\n[ INFO ] unmap request\n");
 	wm_unmanage (ev->window);
@@ -76,17 +90,18 @@ bool onUnmap (XEvent* event) {
 	return true;
 }
 
-bool onKeyPress (XEvent* event) {
+bool
+onKeyPress (XEvent* event) {
 	XKeyPressedEvent* ev = (XKeyPressedEvent* )event;
 	for (int i = 0; i < N_KEY_BINDS; i++)
 		if (ev->keycode == STR_TO_KEYSYM (keyBinds[i].key) && ev->state == keyBinds[i].modifier)
 			return keyBinds[i].cmd (keyBinds[i].args, ev->window);
 
-
 	return true;
 }
 
-bool onButtonPress (XEvent* event) {
+bool
+onButtonPress (XEvent* event) {
 	XButtonPressedEvent* ev = (XButtonPressedEvent* )event;
 	for (int i = 0; i < N_MOUSE_BINDS; i++) {
 		if (ev->button == mouseBinds[i].buttons && ev->state == mouseBinds[i].modifier)
@@ -107,36 +122,22 @@ bool onButtonPress (XEvent* event) {
 			motionEventData.y = 0;
 			motionEventData.prevX = 0;
 			motionEventData.prevY = 0;
-			motionEventData.firstCall = false;
+			motionEventData.firstCall = true;
 			motionEventData.w = ev->window;
 		}
 	}
 	return true;
 }
 
-bool onMotion (XEvent* event) {
-	if (!activeMotionBind)
-		return true;
-
-	XMotionEvent* curEvent = (XMotionEvent* )event;
-	motionEventData.x = curEvent->x_root;
-	motionEventData.y = curEvent->y_root;
-
-	bool ret = activeMotionBind->cmd (activeMotionBind->args, &motionEventData);
-
-	motionEventData.prevX = motionEventData.x;
-	motionEventData.prevY = motionEventData.y;
-	return ret;
-}
-
-void evt_eventHandler (void) {
+void
+evt_eventHandler (void) {
 	// don't wait for X to process requests, since we process
 	// them here
 	XEvent event;
 	handler func;
 	XSync (dpy, False);
 
-	for (;;) {
+	while (run) {
 		XNextEvent (dpy, &event);
 		switch (event.type) {
 			case MapRequest:

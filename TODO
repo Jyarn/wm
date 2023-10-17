@@ -8,8 +8,10 @@
   [x] basic logging
  [x] arg processing
  [ ] floating (tinywm-ish)
-  [_] moving windows
+  [x] moving windows
   [ ] resizing windows
+ [ ] refactors
+  [ ] ...
  [ ] tiling
  [ ] USE flags
  [ ] reparenting??
@@ -50,7 +52,7 @@ ISSUES:
  [x] only able to move a window once, after which motion handler doesn't seem to receive events
       notes:
           cleanup is not always run before if a motion func does not reset
- [ ] movewindow warps the top left corner of the window to the mouse
+ [x] movewindow warps the top left corner of the window to the mouse
       notes:
           it looks funny
  [x] button presses do not register for certain windows

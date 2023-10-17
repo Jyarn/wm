@@ -12,11 +12,11 @@
 #include "debug.h"
 
 Display* dpy;
-screen defaultScreen;
+wm_screen defaultScreen;
 FILE* wm_log;
-client* wm_focus;
+Client* wm_focus;
 
-static client* activeClients;
+static Client* activeClients;
 
 void start_wm (void);
 void cleanup (void);
@@ -27,7 +27,9 @@ void cleanup (void);
 /*
  * Initialize default screen, and set the event mask for the event mask
 */
-void start_wm (void) {
+void
+start_wm (void)
+{
 	activeClients = NULL;
 
 	// open connection to x1
@@ -48,9 +50,11 @@ void start_wm (void) {
 /*
  * free active clients
 */
-void cleanup (void) {
-	client* cur = activeClients;
-	client* prev = cur;
+void
+cleanup (void)
+{
+	Client* cur = activeClients;
+	Client* prev = cur;
 
 	while (cur) {
 		prev = cur;
@@ -62,7 +66,9 @@ void cleanup (void) {
 	XCloseDisplay (dpy);
 }
 
-void wm_moveWindow (client* cl, int x, int y) {
+void
+wm_moveWindow (Client* cl, int x, int y)
+{
 	if (cl == NULL && defaultScreen.root == cl->window) {
 		dbg_log ("[ INFO ] invalid window not moved\n");
 		return;
@@ -73,10 +79,12 @@ void wm_moveWindow (client* cl, int x, int y) {
 	XMoveWindow (dpy, cl->window, x, y);
 }
 
-client* wm_fetchClient (Window w) {
+Client*
+wm_fetchClient (Window w)
+{
 	if (w == defaultScreen.root)
 		return NULL;
-	for (client* c = activeClients; c; c = c->next)
+	for (Client* c = activeClients; c; c = c->next)
 		if (w == c->window)
 			return c;
 	return NULL;
@@ -89,20 +97,23 @@ client* wm_fetchClient (Window w) {
 /*
  * Grab keys specified in keyBinds (config.c)
 */
-void wm_grabKeys (Window win, int sync) {
+void
+wm_grabKeys (Window win)
+{
 	for (int i = 0; i < N_KEY_BINDS; i++)
 		XGrabKey (dpy,
 				  STR_TO_KEYSYM (keyBinds[i].key),
 				  keyBinds[i].modifier,
 				  win,
 				  False,
-				  GrabModeAsync, sync);
+				  GrabModeAsync, GrabModeAsync);
 }
 
 /*
  * Grab mouse (config.c)
 */
-void wm_grabMouse (Window win, int sync) {
+void
+wm_grabMouse (Window win) {
 	XUngrabButton (dpy, AnyButton, AnyModifier, win);
 	for (int i = 0; i < N_MOUSE_BINDS; i++)
 		XGrabButton (
@@ -120,7 +131,8 @@ void wm_grabMouse (Window win, int sync) {
 /*
  * Grab all mouse/key bindings for the ones in moveBinds
 */
-void wm_grabPointerBinds (Window win, int sync) {
+void
+wm_grabPointerBinds (Window win) {
 	for (int i = 0; i < N_MOVE_BINDS; i++)
 		XGrabButton (
 			dpy,
@@ -129,7 +141,7 @@ void wm_grabPointerBinds (Window win, int sync) {
 			win,
 			True,
 			MOUSE_MASK | ButtonReleaseMask,
-			sync, GrabModeAsync,
+			GrabModeAsync, GrabModeAsync,
 			win, None
 		);
 }
@@ -137,7 +149,8 @@ void wm_grabPointerBinds (Window win, int sync) {
 /*
  * Ungrab grabbed things from a window
 */
-void wm_ungrab (Window w) {
+void
+wm_ungrab (Window w) {
 	/*
 		* https://stackoverflow.com/questions/44025639/how-can-i-check-in-xlib-if-window-exists
 
@@ -171,7 +184,8 @@ void wm_ungrab (Window w) {
 /*
  * check if w should be managed (if override_redirect == true)
 */
-bool wm_shouldbeManaged (Window w) {
+bool
+wm_shouldbeManaged (Window w) {
 	XWindowAttributes attrib;
 	if (w == (Window)defaultScreen.root)
 		return false;
@@ -183,13 +197,14 @@ bool wm_shouldbeManaged (Window w) {
 /*
  * attach w to active client list
 */
-void wm_manage (Window w) {
+void
+wm_manage (Window w) {
 	if (wm_fetchClient (w)) // check if window is unmanaged
 		return;
 
 	dbg_log ("[ INFO ] managing window %d\n", w);
 	// attach new Client to list
-	client* newClient = malloc (sizeof (client));
+	Client* newClient = malloc (sizeof (Client));
 	newClient->next = activeClients;
 	activeClients = newClient;
 
@@ -209,9 +224,10 @@ void wm_manage (Window w) {
 /*
  * remove w from active client list
 */
-void wm_unmanage (Window w) {
-	client* cur = activeClients;
-	client* prev = NULL;
+void
+wm_unmanage (Window w) {
+	Client* cur = activeClients;
+	Client* prev = NULL;
 
 	while (cur) {
 		if (cur->window == w) {
@@ -230,7 +246,8 @@ void wm_unmanage (Window w) {
 	}
 }
 
-void wm_killClient (Window w) {
+void
+wm_killClient (Window w) {
 	if (w == (Window)defaultScreen.root)
 		return;
 
@@ -240,7 +257,8 @@ void wm_killClient (Window w) {
 	wm_focus = NULL;
 }
 
-void wm_setFocus (Window w) {
+void
+wm_setFocus (Window w) {
 	XSetInputFocus (dpy, w, RevertToPointerRoot, CurrentTime);
 
 	if (w == (Window)defaultScreen.root)
@@ -253,7 +271,8 @@ void wm_setFocus (Window w) {
 }
 
 
-int main (int argc, char** argv) {
+int
+main (int argc, char** argv) {
 	dbg_init ();
 	dbg_log ("[ INFO ]	wm starting\n");
 

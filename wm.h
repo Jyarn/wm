@@ -18,7 +18,7 @@ typedef struct {
     int w;
     int h;
     Window root;
-} screen;
+} wm_screen;
 
 typedef struct s_client {
     unsigned int w;
@@ -27,23 +27,23 @@ typedef struct s_client {
     int y;
     struct s_client* next;
     Window window;
-} client;
+} Client;
 
 extern Display* dpy;
-extern screen defaultScreen;
-extern client* wm_focus;
+extern wm_screen defaultScreen;
+extern Client* wm_focus;
 
 bool wm_shouldbeManaged (Window);
 void wm_manage (Window);
 void wm_unmanage (Window);
 void wm_killClient (Window);
 void wm_setFocus (Window);
-void wm_grabKeys (Window, int);
-void wm_grabMouse (Window, int);
-void wm_grabPointerBinds (Window, int);
+void wm_grabKeys (Window);
+void wm_grabMouse (Window);
+void wm_grabPointerBinds (Window);
 void wm_setFocus (Window);
 void wm_ungrab (Window);
-void wm_moveWindow (client*, int, int);
-client* wm_fetchClient (Window);
+void wm_moveWindow (Client*, int, int);
+Client* wm_fetchClient (Window);
 
 #endif
