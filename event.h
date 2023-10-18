@@ -4,18 +4,11 @@
 #include <X11/Xlib.h>
 
 
-typedef struct {
-    Window w;
-    bool firstCall;
-
-    unsigned int x;
-    unsigned int y;
-    unsigned int prevX;
-    unsigned int prevY;
-
-} MotionEvent;
-
-typedef bool (*handler)(XEvent*);
+typedef void (*handler)(void);
 void evt_eventHandler (void);
+
+extern bool evt_run;
+extern XEvent evt_currentEvent;
+extern handler evt_handlers[LASTEvent];
 
 #endif

@@ -10,13 +10,12 @@
  [ ] floating (tinywm-ish)
   [x] moving windows
   [ ] resizing windows
- [ ] refactors
-  [ ] ...
  [ ] tiling
  [ ] USE flags
- [ ] reparenting??
+ [ ] reparenting
  [ ] compositing (xcomposite)
  [ ] CLI
+ [ ] hot reloading??
  [ ] multiple workspaces
  [ ] multi-monitor support (randr)
  [ ] EWMH compliance
@@ -57,3 +56,8 @@ ISSUES:
           it looks funny
  [x] button presses do not register for certain windows
      notes: changed grabmode in grabMouse to Sync
+
+REFACTORS:
+ [x] Cleanup coding style
+ [x] Refactor out move binds
+ [x] Remove redundant function args

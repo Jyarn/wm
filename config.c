@@ -9,19 +9,20 @@
 #include "wm.h"
 #include "util.h"
 #include "config.h"
+#include "event.h"
 
-
-bool exit_wm (void* args UNUSED, Window w UNUSED) {
-    return false;
+void exit_wm (void* args UNUSED) {
+    evt_run = false;
+    return;
 }
 
-bool spawn (void* _args, Window w UNUSED) {
+void spawn (void* _args) {
     int i = fork ();
 
     if (i < 0)
         perror ("[ ERROR ]  unable to fork");
     else if (i)
-        return true;
+        return;
     else {
         char args[strlen (_args)];
         strcpy (args, _args);
@@ -46,57 +47,62 @@ bool spawn (void* _args, Window w UNUSED) {
         perror ("[ ERROR ]  execvp failed");
     }
 
-    return false;
+    return;
 }
 
-bool focus (void* args UNUSED, Window w) {
-    dbg_log ("[ INFO ] focus window %d\n", w);
-    wm_setFocus (w);
-    return true;
+void focus (void* args UNUSED) {
+    dbg_log ("[ INFO ] focus window %d\n", evt_currentEvent.xbutton.window);
+    wm_setFocus (evt_currentEvent.xbutton.window);
+    return;
 }
 
-bool killWindow (void* args UNUSED, Window w UNUSED)  {
+void killWindow (void* args UNUSED)  {
     if (wm_focus)
         wm_killClient (wm_focus->window);
 
-    return true;
+    return;
 }
 
-bool moveWindow (void* args UNUSED, MotionEvent* evt) {
-    if (evt->firstCall)
-        return true;
+void moveWindow (void* args UNUSED) {
+    Client* cl = wm_fetchClient (evt_currentEvent.xbutton.window);
 
-    Client* cl = wm_fetchClient (evt->w);
-    if (cl != NULL)
-        wm_moveWindow (cl, cl->x + evt->x - evt->prevX, cl->y + evt->y - evt->prevY);
-    return true;
-}
-
-bool resizeWindow (void* args UNUSED, MotionEvent* evt) {
-    Client* cl = wm_fetchClient (evt->w);
     if (!cl)
-        return true;
+        return;
 
-    static unsigned int wX;
-    static unsigned int wY;
-    if (evt->firstCall) {
-        wX = (evt->x*2 > cl->x + cl->w) ? cl->w+cl->x : (unsigned int)cl->x;
-        wY = (evt->y*2 > cl->y + cl->h) ? cl->h+cl->y : (unsigned int)cl->y;
-        evt->prevX = wX;
-        evt->prevY = wY;
+    XMotionEvent m;
+    handler h;
+    int prevX = evt_currentEvent.xbutton.x_root;
+    int prevY = evt_currentEvent.xbutton.y_root;
 
-        XWarpPointer (dpy, defaultScreen.root, None, 0, 0, 0, 0, wX-evt->x, wY-evt->y);
-        return true;
+    WM_GRABPOINTER ();
+    for (;;) {
+        XNextEvent (dpy, &evt_currentEvent);
+        switch (evt_currentEvent.type) {
+            case ButtonPress:
+            case KeyPress:
+                break;
+            case MotionNotify:
+                m = evt_currentEvent.xmotion;
+                wm_moveWindow (cl,
+                               cl->x + m.x_root - prevX,
+                               cl->y + m.y_root - prevY);
+                prevX = m.x_root;
+                prevY = m.y_root;
+                break;
+            case ButtonRelease:
+                goto EXIT;
+            default:
+                if ((h = evt_handlers[evt_currentEvent.type]))
+                    h ();
+        }
     }
-    else {
-        wX += evt->x-evt->prevX;
-        wY += evt->y-evt->prevY;
-        cl->w = wX;
-        cl->h = wY;
-        XResizeWindow (dpy, evt->w, wX, wY);
-    }
 
-    return true;
+EXIT:
+    WM_UNGRABPOINTER ();
+}
+
+void resizeWindow (void* args UNUSED) {
+    return;
 }
 
 const keyChord keyBinds[] = {
@@ -110,10 +116,7 @@ const keyChord keyBinds[] = {
 };
 
 const mouseBind mouseBinds[] = {
-    {.modifier = NOMODIFIER, .buttons = Button1, .cmd = focus  , .args = NULL }
-};
-
-const moveBind moveBinds[] = {
-    {.modifier = Mod4Mask            , .buttons = Button1, .cmd = moveWindow  , .args = NULL},
-    {.modifier = Mod4Mask | ShiftMask, .buttons = Button1, .cmd = resizeWindow, .args = NULL}
+    { .modifier = NOMODIFIER, .buttons = Button1, .cmd = focus          , .args = NULL },
+    { .modifier = Mod4Mask  , .buttons = Button1, .cmd = moveWindow     , .args = NULL },
+    { .modifier = Mod4Mask  , .buttons = Button1, .cmd = resizeWindow   , .args = NULL }
 };

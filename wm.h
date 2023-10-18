@@ -6,12 +6,11 @@
 
 #define ROOT_MASK SubstructureRedirectMask | SubstructureNotifyMask | KeyPressMask | ButtonPressMask | PointerMotionMask
 #define WIN_MASK StructureNotifyMask
-#define MOUSE_MASK ButtonPressMask
+#define MOUSE_MASK ButtonPressMask | ButtonReleaseMask
 #define MOTION_MASK PointerMotionMask | ButtonPressMask | ButtonReleaseMask
-#define IN_MOTION_MASK SubstructureRedirectMask | SubstructureNotifyMask | PointerMotionMask
 
-#define WM_GRABPOINTER(win) XGrabPointer (dpy, defaultScreen.root, False, MOTION_MASK, GrabModeAsync, GrabModeAsync, None, None, CurrentTime)
-#define WM_UNGRABPOINTER(win) XUngrabPointer (dpy, CurrentTime);
+#define WM_GRABPOINTER() XGrabPointer (dpy, defaultScreen.root, False, MOTION_MASK, GrabModeAsync, GrabModeAsync, None, None, CurrentTime)
+#define WM_UNGRABPOINTER() XUngrabPointer (dpy, CurrentTime);
 
 typedef struct {
     int screen;
