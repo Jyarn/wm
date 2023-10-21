@@ -71,6 +71,7 @@ void moveWindow (void* args UNUSED) {
 
     XMotionEvent m;
     handler h;
+
     int prevX = evt_currentEvent.xbutton.x_root;
     int prevY = evt_currentEvent.xbutton.y_root;
 
@@ -102,6 +103,59 @@ EXIT:
 }
 
 void resizeWindow (void* args UNUSED) {
+    XButtonPressedEvent ev = evt_currentEvent.xbutton;
+    Client* cl = wm_fetchClient (ev.window);
+    if (!cl)
+        return;
+
+    const bool ulx = (unsigned int)ev.x*2 < cl->w;
+    const bool uly = (unsigned int)ev.y*2 < cl->h;
+
+    unsigned int prevX = ulx ? (unsigned int)cl->x : cl->x + cl->w;
+    unsigned int prevY = uly ? (unsigned int)cl->y : cl->y + cl->h;
+
+    XWarpPointer (dpy, defaultScreen.root, None, 0, 0, 0, 0, prevX - ev.x_root, prevY - ev.y_root);
+
+    XMotionEvent mov;
+    handler h;
+    WM_GRABPOINTER ();
+    for (;;) {
+        XNextEvent (dpy, &evt_currentEvent);
+        switch (evt_currentEvent.type) {
+            case ButtonPress:
+            case KeyPress:
+                break;
+            case MotionNotify:
+                mov = evt_currentEvent.xmotion;
+                if (ev.x_root <= cl->w+cl->x && ev.x_root >= cl->x){
+                    if (ulx)
+                        wm_changeGeomRelative (cl, ev.x_root-prevX, 0, prevX-ev.x_root, 0);
+                    else
+                        wm_changeGeomRelative (cl, 0, 0, ev.x_root-prevX, 0);
+                }
+                if (ev.y_root <= cl->h+cl->y && ev.y_root >= cl->y) {
+                    if (uly)
+                        wm_changeGeomRelative (cl, 0, ev.y_root-prevY, 0, prevY-ev.y_root);
+                    else
+                        wm_changeGeomRelative (cl, 0, 0, 0, ev.y_root-prevY);
+                }
+
+                prevX = mov.x_root;
+                prevY = mov.y_root;
+
+                break;
+            case ButtonRelease:
+                goto EXIT;
+            default:
+                h = evt_handlers[evt_currentEvent.type];
+                if (h)
+                    h ();
+                break;
+        }
+    }
+
+EXIT:
+    WM_UNGRABPOINTER ();
     return;
 }
 
@@ -116,7 +170,7 @@ const keyChord keyBinds[] = {
 };
 
 const mouseBind mouseBinds[] = {
-    { .modifier = NOMODIFIER, .buttons = Button1, .cmd = focus          , .args = NULL },
-    { .modifier = Mod4Mask  , .buttons = Button1, .cmd = moveWindow     , .args = NULL },
-    { .modifier = Mod4Mask  , .buttons = Button1, .cmd = resizeWindow   , .args = NULL }
+    { .modifier = NOMODIFIER            , .buttons = Button1, .cmd = focus          , .args = NULL },
+    { .modifier = Mod4Mask              , .buttons = Button1, .cmd = moveWindow     , .args = NULL },
+    { .modifier = Mod4Mask | ShiftMask  , .buttons = Button1, .cmd = resizeWindow   , .args = NULL }
 };

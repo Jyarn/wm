@@ -43,6 +43,7 @@ void wm_grabPointerBinds (Window);
 void wm_setFocus (Window);
 void wm_ungrab (Window);
 void wm_moveWindow (Client*, int, int);
+void wm_changeGeomRelative (Client*, int, int, int, int);
 Client* wm_fetchClient (Window);
 
 #endif
