@@ -7,16 +7,17 @@
   [x] create error handler
   [x] basic logging
  [x] arg processing
- [ ] floating (tinywm-ish)
+ [x] floating (tinywm-ish)
   [x] moving windows
-  [ ] resizing windows
+  [x] resizing windows
+  [ ] hiding windows
+ [ ] multiple workspaces
  [ ] tiling
  [ ] USE flags
  [ ] reparenting
  [ ] compositing (xcomposite)
  [ ] CLI
- [ ] hot reloading??
- [ ] multiple workspaces
+ [ ] config file / hot reloading??
  [ ] multi-monitor support (randr)
  [ ] EWMH compliance
  [ ] ICCM compliance

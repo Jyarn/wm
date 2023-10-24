@@ -20,8 +20,8 @@ typedef struct {
 } wm_screen;
 
 typedef struct s_client {
-    unsigned int w;
-    unsigned int h;
+    int w;
+    int h;
     int x;
     int y;
     struct s_client* next;

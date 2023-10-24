@@ -90,7 +90,7 @@ wm_changeGeomRelative (Client* cl, int relx, int rely, int relw, int relh)
 	cl->w += relw;
 	cl->h += relh;
 
-	XMoveResizeWindow (dpy, cl->window, cl->x, cl->y, relw, relh);
+	XMoveResizeWindow (dpy, cl->window, cl->x, cl->y, cl->w, cl->h);
 }
 
 Client*
@@ -207,12 +207,12 @@ wm_manage (Window w) {
 
 	// fetch geometry of window
 	Window root;
-	unsigned int borderWidth, depth;
-	Window child_return;
+	unsigned int borderWidth, depth, t_w, t_h;
 
-	XGetGeometry (dpy, w, &root, &newClient->x, &newClient->y, &newClient->w, &newClient->h, &borderWidth, &depth);
-	bool ret = XTranslateCoordinates (dpy, defaultScreen.root, w, 0, 0, &newClient->x, &newClient->y, &child_return);
-	assert (ret);
+	XGetGeometry (dpy, w, &root, &newClient->x, &newClient->y, &t_w, &t_h, &borderWidth, &depth);
+	newClient->w = (int)t_w;
+	newClient->h = (int)t_h;
+
 	// init new client
 	newClient->window = w;
 

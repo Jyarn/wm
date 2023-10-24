@@ -6,7 +6,7 @@
 
 #include "event.h"
 
-#define N_KEY_BINDS 7
+#define N_KEY_BINDS 8
 #define N_MOUSE_BINDS 3
 #define NOMODIFIER 0
 
