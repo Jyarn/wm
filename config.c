@@ -84,9 +84,10 @@ void moveWindow (void* args UNUSED) {
                 break;
             case MotionNotify:
                 m = evt_currentEvent.xmotion;
-                wm_moveWindow (cl,
-                               cl->x + m.x_root - prevX,
-                               cl->y + m.y_root - prevY);
+                wm_changeGeomRelative (cl,
+                                       m.x_root - prevX,
+                                       m.y_root - prevY,
+                                       0, 0);
                 prevX = m.x_root;
                 prevY = m.y_root;
                 break;

@@ -67,19 +67,6 @@ cleanup (void)
 }
 
 void
-wm_moveWindow (Client* cl, int x, int y)
-{
-	if (cl == NULL && defaultScreen.root == cl->window) {
-		dbg_log ("[ INFO ] invalid window not moved\n");
-		return;
-	}
-
-	cl->x = x;
-	cl->y = y;
-	XMoveWindow (dpy, cl->window, x, y);
-}
-
-void
 wm_changeGeomRelative (Client* cl, int relx, int rely, int relw, int relh)
 {
 	if (!cl)
