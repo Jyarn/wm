@@ -39,13 +39,13 @@ void
 onMapReq (void) {
 	XMapRequestEvent* ev = &evt_currentEvent.xmaprequest;
 	dbg_log ("\n[ INFO ] map request %d\n", ev->window);
+	XMapWindow (dpy, ev->window);
 
 	if (wm_shouldbeManaged (ev->window)) {
-		wm_manage (ev->window);
+		Client* cl = wm_manage (ev->window);
 		wm_grabKeys (ev->window);
 		wm_grabMouse (ev->window);
-		XMapWindow (dpy, ev->window);
-		wm_setFocus (ev->window);
+		wm_setFocus (cl);
 	}
 }
 
@@ -69,6 +69,9 @@ onDestroy (void) {
 void
 onUnmap (void) {
 	XUnmapEvent* ev = &evt_currentEvent.xunmap;
+	Client* cl;
+	if ((cl = wm_fetchClient (ev->window)) && cl->minimized)
+		return;
 	dbg_log ("\n[ INFO ] unmap request\n");
 	wm_unmanage (ev->window);
 	wm_ungrab (ev->window);

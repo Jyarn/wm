@@ -24,7 +24,7 @@ void dbg_log (const char* str, ...) {
 }
 
 void dbg_init (void) {
-    logFile = fopen ("wm.log", "w");
+    logFile = fopen ("/home/flt/REPOS/wm/wm.log", "w");
     handlerDefault = XSetErrorHandler (handlerUser);
 }
 

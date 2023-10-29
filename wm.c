@@ -16,7 +16,7 @@ wm_screen defaultScreen;
 FILE* wm_log;
 Client* wm_focus;
 
-static Client* activeClients;
+Client* activeClients;
 
 void start_wm (void);
 void cleanup (void);
@@ -173,6 +173,8 @@ wm_shouldbeManaged (Window w) {
 	XWindowAttributes attrib;
 	if (w == (Window)defaultScreen.root)
 		return false;
+	if (wm_fetchClient (w))
+		return false;
 	if (!XGetWindowAttributes (dpy, w, &attrib) || attrib.override_redirect)
 		return false;
 	return true;
@@ -181,16 +183,17 @@ wm_shouldbeManaged (Window w) {
 /*
  * attach w to active client list
 */
-void
+Client*
 wm_manage (Window w) {
 	if (wm_fetchClient (w)) // check if window is unmanaged
-		return;
+		return NULL;
 
 	dbg_log ("[ INFO ] managing window %d\n", w);
 	// attach new Client to list
 	Client* newClient = malloc (sizeof (Client));
 	newClient->next = activeClients;
 	activeClients = newClient;
+	newClient->minimized = false;
 
 	// fetch geometry of window
 	Window root;
@@ -205,6 +208,7 @@ wm_manage (Window w) {
 
 	// set event mask
 	XSelectInput (dpy, w, WIN_MASK);
+	return newClient;
 }
 
 /*
@@ -240,22 +244,39 @@ wm_killClient (Window w) {
 	wm_unmanage (w);
 	XSetCloseDownMode (dpy, DestroyAll);
 	XKillClient (dpy, w);
+	wm_focusNext (false);
+}
+
+void
+wm_focusNext (bool focusMinimized) {
+	if (activeClients == NULL) {
+		wm_focus = NULL;
+		return;
+	}
+
+	Client* temp = wm_focus;
+	for (temp = wm_focus->next; temp != wm_focus; temp = temp->next) {
+		if (temp)
+			temp = activeClients;
+		if (!focusMinimized && temp->next){
+			wm_setFocus (temp);
+			if (temp->minimized) {
+				XMapWindow (dpy, temp->window);
+				temp->minimized = false;
+			}
+
+			return;
+		}
+	}
+
 	wm_focus = NULL;
 }
 
 void
-wm_setFocus (Window w) {
-	XSetInputFocus (dpy, w, RevertToPointerRoot, CurrentTime);
-
-	if (w == (Window)defaultScreen.root)
-		return;
-
-	wm_focus = wm_fetchClient (w);
-	if (wm_focus == NULL)
-		dbg_log ("[ INFO ] invalid window\n");
-	dbg_log ("[ INFO ] focus is %d\n", wm_focus->window);
+wm_setFocus (Client* cl) {
+	wm_focus = cl;
+	XSetInputFocus (dpy, cl->window, RevertToPointerRoot, CurrentTime);
 }
-
 
 int
 main (int argc, char** argv) {
@@ -264,7 +285,7 @@ main (int argc, char** argv) {
 
 	for (int i = 1; i < argc; i++) {
 #ifdef __DEBUG__
-	if (strcmp (argv[i], "--debug") == 0) {
+	if (!strcmp (argv[i], "--debug")) {
 		int a = 1;
 		while (a) {}
 		dbg_handlerOn ();

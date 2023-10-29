@@ -11,12 +11,14 @@
 #include "config.h"
 #include "event.h"
 
-void exit_wm (void* args UNUSED) {
+void
+exit_wm (void* args UNUSED) {
     evt_run = false;
     return;
 }
 
-void spawn (void* _args) {
+void
+spawn (void* _args) {
     int i = fork ();
 
     if (i < 0)
@@ -50,20 +52,27 @@ void spawn (void* _args) {
     return;
 }
 
-void focus (void* args UNUSED) {
+void
+focus (void* args UNUSED) {
     dbg_log ("[ INFO ] focus window %d\n", evt_currentEvent.xbutton.window);
-    wm_setFocus (evt_currentEvent.xbutton.window);
-    return;
+    Client* cl = wm_fetchClient(evt_currentEvent.xany.window);
+    if (!cl)
+        return;
+
+    XSetInputFocus (dpy, cl->window, RevertToPointerRoot, CurrentTime);
+    wm_focus = cl;
 }
 
-void killWindow (void* args UNUSED)  {
+void
+killWindow (void* args UNUSED)  {
     if (wm_focus)
         wm_killClient (wm_focus->window);
 
     return;
 }
 
-void moveWindow (void* args UNUSED) {
+void
+moveWindow (void* args UNUSED) {
     Client* cl = wm_fetchClient (evt_currentEvent.xbutton.window);
 
     if (!cl)
@@ -103,7 +112,8 @@ EXIT:
     WM_UNGRABPOINTER ();
 }
 
-void resizeWindow (void* args UNUSED) {
+void
+resizeWindow (void* args UNUSED) {
     XButtonPressedEvent ev = evt_currentEvent.xbutton;
     Client* cl = wm_fetchClient (ev.window);
     if (!cl)
@@ -161,15 +171,33 @@ EXIT:
     return;
 }
 
+void
+minimize (void* args UNUSED) {
+    Client* cl = wm_fetchClient (evt_currentEvent.xany.window);
+    if (!cl)
+        return;
+
+    XUnmapWindow (dpy, cl->window);
+    cl->minimized = true;
+    wm_focusNext (false);
+}
+
+void
+tabwindows (void* args UNUSED) {
+    wm_focusNext (true);
+}
+
 const keyChord keyBinds[] = {
-    {.modifier = Mod4Mask | ShiftMask   , .key = "e"                    , .cmd = exit_wm    , .args = NULL},
-    {.modifier = Mod4Mask               , .key = "Return"               , .cmd = spawn      , .args = "alacritty"},
-    {.modifier = Mod4Mask               , .key = "d"                    , .cmd = spawn      , .args = "dmenu_run"},
-    {.modifier = AnyModifier            , .key = "XF86AudioRaiseVolume" , .cmd = spawn      , .args = "pactl set-sink-volume @DEFAULT_SINK@ +5%"},
-    {.modifier = AnyModifier            , .key = "XF86AudioLowerVolume" , .cmd = spawn      , .args = "pactl set-sink-volume @DEFAULT_SINK@ -5%"},
-    {.modifier = AnyModifier            , .key = "XF86AudioMute"        , .cmd = spawn      , .args = "pactl set-source-mute @DEFAULT_SOURCE@ toggle"},
-    {.modifier = Mod4Mask | ShiftMask   , .key = "q"                    , .cmd = killWindow , .args = NULL},
-    {.modifier = Mod4Mask | ShiftMask   , .key = "Return"               , .cmd = spawn     , .args = "alacritty -e bash -c CAD.sh"}
+    { .modifier = Mod4Mask | ShiftMask  , .key = "e"                    , .cmd = exit_wm    , .args = NULL},
+    { .modifier = Mod4Mask              , .key = "Return"               , .cmd = spawn      , .args = "alacritty"},
+    { .modifier = Mod4Mask              , .key = "d"                    , .cmd = spawn      , .args = "dmenu_run"},
+    { .modifier = AnyModifier           , .key = "XF86AudioRaiseVolume" , .cmd = spawn      , .args = "pactl set-sink-volume @DEFAULT_SINK@ +5%"},
+    { .modifier = AnyModifier           , .key = "XF86AudioLowerVolume" , .cmd = spawn      , .args = "pactl set-sink-volume @DEFAULT_SINK@ -5%"},
+    { .modifier = AnyModifier           , .key = "XF86AudioMute"        , .cmd = spawn      , .args = "pactl set-source-mute @DEFAULT_SOURCE@ toggle"},
+    { .modifier = Mod4Mask | ShiftMask  , .key = "q"                    , .cmd = killWindow , .args = NULL},
+    { .modifier = Mod4Mask | ShiftMask  , .key = "Return"               , .cmd = spawn      , .args = "alacritty -e bash -c CAD.sh"},
+    { .modifier = Mod4Mask              , .key = "q"                    , .cmd = minimize   , .args = NULL},
+    { .modifier = Mod4Mask              , .key = "Tab"                  , .cmd = tabwindows , .args = NULL},
 };
 
 const mouseBind mouseBinds[] = {
