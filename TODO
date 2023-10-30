@@ -10,7 +10,7 @@
  [x] floating (tinywm-ish)
   [x] moving windows
   [x] resizing windows
-  [ ] hiding windows
+  [x] hiding windows
  [ ] multiple workspaces
  [ ] tiling
  [ ] USE flags

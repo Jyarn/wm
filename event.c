@@ -70,7 +70,7 @@ void
 onUnmap (void) {
 	XUnmapEvent* ev = &evt_currentEvent.xunmap;
 	Client* cl;
-	if ((cl = wm_fetchClient (ev->window)) && cl->minimized)
+	if ((cl = wm_fetchClient (ev->window)) != NULL && cl->minimized)
 		return;
 	dbg_log ("\n[ INFO ] unmap request\n");
 	wm_unmanage (ev->window);

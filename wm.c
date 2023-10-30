@@ -241,39 +241,46 @@ wm_killClient (Window w) {
 	if (w == (Window)defaultScreen.root)
 		return;
 
+	wm_focusNext (false);
 	wm_unmanage (w);
 	XSetCloseDownMode (dpy, DestroyAll);
 	XKillClient (dpy, w);
-	wm_focusNext (false);
 }
 
 void
 wm_focusNext (bool focusMinimized) {
-	if (activeClients == NULL) {
-		wm_focus = NULL;
+	if (!activeClients) {
+		wm_setFocus (NULL);
 		return;
 	}
-
-	Client* temp = wm_focus;
-	for (temp = wm_focus->next; temp != wm_focus; temp = temp->next) {
-		if (temp)
-			temp = activeClients;
-		if (!focusMinimized && temp->next){
-			wm_setFocus (temp);
-			if (temp->minimized) {
+	else {
+		Client* temp = (wm_focus != NULL) ? wm_focus->next : NULL;
+		do {
+			if (!temp)
+				temp = activeClients;
+			else if (focusMinimized || !temp->minimized) {
 				XMapWindow (dpy, temp->window);
 				temp->minimized = false;
+				wm_setFocus (temp);
+				return;
 			}
+			else
+				temp = temp->next;
+		} while (temp != wm_focus);
 
-			return;
-		}
+		wm_setFocus (NULL);
 	}
-
-	wm_focus = NULL;
 }
 
 void
 wm_setFocus (Client* cl) {
+	if (cl == NULL) {
+		dbg_log ("[ INFO ] wm_setfocus w = NULL\n");
+		wm_focus = NULL;
+		XSetInputFocus (dpy, defaultScreen.root, RevertToPointerRoot, CurrentTime);
+		return;
+	}
+	dbg_log ("[ INFO ] wm_setfocus w = %d\n", cl->window);
 	wm_focus = cl;
 	XSetInputFocus (dpy, cl->window, RevertToPointerRoot, CurrentTime);
 }

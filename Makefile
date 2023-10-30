@@ -1,4 +1,4 @@
-CC=gcc
+CC=clang
 CFLAGS=-g -Wall -Wextra -Wstrict-prototypes
 FLAGS=-D__DEBUG__
 EXE=wm
