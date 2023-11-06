@@ -11,6 +11,19 @@
 #include "config.h"
 #include "event.h"
 
+void exit_wm (void* args UNUSED);
+void spawn (void* args);
+void focus (void* args UNUSED);
+void killWindow (void* args UNUSED);
+void moveWindow (void* args UNUSED);
+void resizeWindow (void* args UNUSED);
+void minimize (void* args UNUSED);
+void tabwindows (void* args UNUSED);
+void toggleFloating (void* args UNUSED);
+void toggleTiling (void* args UNUSED);
+
+
+
 void
 exit_wm (void* args UNUSED) {
     evt_run = false;
@@ -54,8 +67,8 @@ spawn (void* _args) {
 
 void
 focus (void* args UNUSED) {
-    dbg_log ("[ INFO ] focus window %d\n", evt_currentEvent.xbutton.window);
-    Client* cl = wm_fetchClient(evt_currentEvent.xany.window);
+    dbg_log ("[ INFO ] focus window %d\n", CURRENT_WINDOW);
+    Client* cl = wm_fetchClient(CURRENT_WINDOW);
     if (!cl)
         return;
 
@@ -73,7 +86,7 @@ killWindow (void* args UNUSED)  {
 
 void
 moveWindow (void* args UNUSED) {
-    Client* cl = wm_fetchClient (evt_currentEvent.xbutton.window);
+    Client* cl = wm_fetchClient (CURRENT_WINDOW);
 
     if (!cl)
         return;
@@ -173,12 +186,11 @@ EXIT:
 
 void
 minimize (void* args UNUSED) {
-    Client* cl = wm_fetchClient (evt_currentEvent.xany.window);
+    Client* cl = wm_fetchClient (CURRENT_WINDOW);
     if (!cl)
         return;
 
-    XUnmapWindow (dpy, cl->window);
-    cl->minimized = true;
+    wm_minimize (cl);
     wm_focusNext (false);
 }
 
@@ -187,7 +199,8 @@ tabwindows (void* args UNUSED) {
     wm_focusNext (true);
 }
 
-const keyChord keyBinds[] = {
+
+const keyChord keyBinds[N_KEY_BINDS] = {
     { .modifier = Mod4Mask | ShiftMask  , .key = "e"                    , .cmd = exit_wm    , .args = NULL},
     { .modifier = Mod4Mask              , .key = "Return"               , .cmd = spawn      , .args = "alacritty"},
     { .modifier = Mod4Mask              , .key = "d"                    , .cmd = spawn      , .args = "dmenu_run"},
@@ -200,7 +213,7 @@ const keyChord keyBinds[] = {
     { .modifier = Mod4Mask              , .key = "Tab"                  , .cmd = tabwindows , .args = NULL},
 };
 
-const mouseBind mouseBinds[] = {
+const mouseBind mouseBinds[N_MOUSE_BINDS] = {
     { .modifier = NOMODIFIER            , .buttons = Button1, .cmd = focus          , .args = NULL },
     { .modifier = Mod4Mask              , .buttons = Button1, .cmd = moveWindow     , .args = NULL },
     { .modifier = Mod4Mask | ShiftMask  , .buttons = Button1, .cmd = resizeWindow   , .args = NULL }

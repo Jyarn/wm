@@ -11,14 +11,15 @@
   [x] moving windows
   [x] resizing windows
   [x] hiding windows
- [ ] multiple workspaces
  [ ] tiling
+ [ ] fullscreen
+ [ ] multiple workspaces
  [ ] USE flags
  [ ] reparenting
  [ ] compositing (xcomposite)
  [ ] CLI
- [ ] config file / hot reloading??
  [ ] multi-monitor support (randr)
+ [ ] config file / hot reloading??
  [ ] EWMH compliance
  [ ] ICCM compliance
  [ ] key chording

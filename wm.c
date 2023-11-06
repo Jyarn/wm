@@ -285,6 +285,12 @@ wm_setFocus (Client* cl) {
 	XSetInputFocus (dpy, cl->window, RevertToPointerRoot, CurrentTime);
 }
 
+void
+wm_minimize (Client* cl) {
+	XUnmapWindow (dpy, cl->window);
+	cl->minimized = true;
+}
+
 int
 main (int argc, char** argv) {
 	dbg_init ();

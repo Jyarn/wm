@@ -1,5 +1,5 @@
 CC=clang
-CFLAGS=-g -Wall -Wextra -Wstrict-prototypes
+CFLAGS=-g -Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes
 FLAGS=-D__DEBUG__
 EXE=wm
 

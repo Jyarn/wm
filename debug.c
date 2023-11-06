@@ -14,6 +14,7 @@ static XErrorHandler handlerDefault = NULL;
 
 int handlerUser (Display*, XErrorEvent*);
 int handlerIgnore (Display*, XErrorEvent*);
+int handlerOff (Display* dsp, XErrorEvent* event);
 
 void dbg_log (const char* str, ...) {
     va_list args;
