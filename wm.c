@@ -10,6 +10,7 @@
 #include "config.h"
 #include "util.h"
 #include "debug.h"
+#include "tl.h"
 
 Display* dpy;
 wm_screen defaultScreen;
