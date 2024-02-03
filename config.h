@@ -6,25 +6,34 @@
 
 #include "event.h"
 
-#define N_KEY_BINDS 10
+#define N_KEY_BINDS 30
 #define N_MOUSE_BINDS 3
 #define NOMODIFIER 0
+#define BORDERWIDTH 3
 
-typedef void (*cmd)(void*);
+typedef union {
+    unsigned int ui;
+    void* vp;
+    char c;
+    char* str;
+} Arg;
+
+typedef void (*cmd)(Arg);
 
 typedef struct {
     unsigned int modifier;
     char* key;
     cmd cmd;
-    void* args;
+    Arg args;
 } keyChord;
 
 typedef struct {
     unsigned int modifier;
     unsigned int buttons;
     cmd cmd;
-    void* args;
+    Arg args;
 } mouseBind;
+
 
 extern const keyChord keyBinds[];
 extern const mouseBind mouseBinds[];

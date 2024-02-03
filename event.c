@@ -30,9 +30,7 @@ handler evt_handlers[LASTEvent] = {
 	[ButtonPress] = onButtonPress
 };
 
-
-
-
+bool ignorenextunmap;
 
 
 void
@@ -70,8 +68,10 @@ void
 onUnmap (void) {
 	XUnmapEvent* ev = &evt_currentEvent.xunmap;
 	Client* cl;
-	if ((cl = wm_fetchClient (ev->window)) != NULL && cl->minimized)
+	if ((cl = wm_fetchClient (ev->window)) != NULL && ignorenextunmap) {
+        ignorenextunmap = 0;
 		return;
+    }
 	dbg_log ("\n[ INFO ] unmap request\n");
 	wm_unmanage (ev->window);
 	wm_ungrab (ev->window);
@@ -85,7 +85,6 @@ onKeyPress (void) {
 			keyBinds[i].cmd (keyBinds[i].args);
 			return;
 		}
-
 }
 
 void
@@ -104,6 +103,7 @@ evt_eventHandler (void) {
 	// them here
 	XSync (dpy, False);
 	handler h;
+    ignorenextunmap = false;
 
 	while (evt_run) {
 		XNextEvent (dpy, &evt_currentEvent);

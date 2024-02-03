@@ -16,8 +16,8 @@ Display* dpy;
 wm_screen defaultScreen;
 FILE* wm_log;
 Client* wm_focus;
-
 Client* activeClients;
+unsigned int workspacenum;
 
 void start_wm (void);
 void cleanup (void);
@@ -46,6 +46,7 @@ start_wm (void)
 	XSetWindowAttributes winAttrib;
 	winAttrib.event_mask = ROOT_MASK;
 	XSelectInput (dpy, defaultScreen.root, winAttrib.event_mask);
+    workspacenum = 0;
 }
 
 /*
@@ -203,12 +204,14 @@ wm_manage (Window w) {
 	XGetGeometry (dpy, w, &root, &newClient->x, &newClient->y, &t_w, &t_h, &borderWidth, &depth);
 	newClient->w = (int)t_w;
 	newClient->h = (int)t_h;
+    newClient->workspace = workspacenum;
 
 	// init new client
 	newClient->window = w;
 
 	// set event mask
 	XSelectInput (dpy, w, WIN_MASK);
+    XSetWindowBorderWidth (dpy, w, BORDERWIDTH);
 	return newClient;
 }
 
@@ -259,9 +262,9 @@ wm_focusNext (bool focusMinimized) {
 		do {
 			if (!temp)
 				temp = activeClients;
-			else if (focusMinimized || !temp->minimized) {
-				XMapWindow (dpy, temp->window);
-				temp->minimized = false;
+			else if (workspacenum == temp->workspace && (focusMinimized || !temp->minimized)) {
+                XMoveWindow (dpy, temp->window, temp->x, temp->y);
+                temp->minimized = false;
 				wm_setFocus (temp);
 				return;
 			}
@@ -287,9 +290,24 @@ wm_setFocus (Client* cl) {
 }
 
 void
+wm_show (Client* cl) {
+    assert (cl != NULL);
+    if (!cl->minimized)
+        return;
+
+    XMoveWindow (dpy, cl->window, cl->x, cl->y);
+	cl->minimized = false;
+}
+
+void
 wm_minimize (Client* cl) {
-	XUnmapWindow (dpy, cl->window);
-	cl->minimized = true;
+    assert (cl != NULL);
+    assert (cl->window != defaultScreen.root);
+    assert (wm_fetchClient (cl->window));
+
+    dbg_log ("[ INFO] minimize\n");
+    XMoveWindow (dpy, cl->window, -2*cl->w, -2*cl->h);
+    cl->minimized = true;
 }
 
 int

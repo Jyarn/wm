@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdint.h>
 #include <assert.h>
 
 #include "debug.h"
@@ -11,27 +12,15 @@
 #include "config.h"
 #include "event.h"
 
-void exit_wm (void* args UNUSED);
-void spawn (void* args);
-void focus (void* args UNUSED);
-void killWindow (void* args UNUSED);
-void moveWindow (void* args UNUSED);
-void resizeWindow (void* args UNUSED);
-void minimize (void* args UNUSED);
-void tabwindows (void* args UNUSED);
-void toggleFloating (void* args UNUSED);
-void toggleTiling (void* args UNUSED);
-
-
 
 void
-exit_wm (void* args UNUSED) {
+exit_wm (Arg args UNUSED) {
     evt_run = false;
     return;
 }
 
 void
-spawn (void* _args) {
+spawn (Arg _args) {
     int i = fork ();
 
     if (i < 0)
@@ -39,8 +28,8 @@ spawn (void* _args) {
     else if (i)
         return;
     else {
-        char args[strlen (_args)];
-        strcpy (args, _args);
+        char args[strlen (_args.str)];
+        strcpy (args, _args.str);
         int nSpaces = 0;
         // count number of spaces
         for (int i = 0; args[i]; i++)
@@ -66,7 +55,7 @@ spawn (void* _args) {
 }
 
 void
-focus (void* args UNUSED) {
+focus (Arg args UNUSED) {
     dbg_log ("[ INFO ] focus window %d\n", CURRENT_WINDOW);
     Client* cl = wm_fetchClient(CURRENT_WINDOW);
     if (!cl)
@@ -77,7 +66,7 @@ focus (void* args UNUSED) {
 }
 
 void
-killWindow (void* args UNUSED)  {
+killWindow (Arg args UNUSED)  {
     if (wm_focus)
         wm_killClient (wm_focus->window);
 
@@ -85,7 +74,7 @@ killWindow (void* args UNUSED)  {
 }
 
 void
-moveWindow (void* args UNUSED) {
+moveWindow (Arg args UNUSED) {
     Client* cl = wm_fetchClient (CURRENT_WINDOW);
 
     if (!cl)
@@ -126,7 +115,7 @@ EXIT:
 }
 
 void
-resizeWindow (void* args UNUSED) {
+resizeWindow (Arg args UNUSED) {
     XButtonPressedEvent ev = evt_currentEvent.xbutton;
     Client* cl = wm_fetchClient (ev.window);
     if (!cl)
@@ -185,7 +174,7 @@ EXIT:
 }
 
 void
-minimize (void* args UNUSED) {
+minimize (Arg args UNUSED) {
     Client* cl = wm_fetchClient (CURRENT_WINDOW);
     if (!cl)
         return;
@@ -195,26 +184,80 @@ minimize (void* args UNUSED) {
 }
 
 void
-tabwindows (void* args UNUSED) {
+tabwindows (Arg args UNUSED) {
     wm_focusNext (true);
 }
 
+void
+switchworkspace (Arg args)
+{
+    if (args.ui == workspacenum)
+        return;
+
+    Client* cur = activeClients;
+    dbg_log ("[ INFO ] switching to workspace %d\n", args.ui);
+
+    while (cur) {
+        if (cur->workspace == args.ui && !cur->minimized)
+            XMoveWindow (dpy, cur->window, cur->x, cur->y);
+        else if (!cur->minimized && cur->workspace == workspacenum) {
+            XMoveWindow (dpy, cur->window, -3840, -2160); // move to the shadow zone
+        }
+        cur = cur->next;
+    }
+
+    workspacenum = args.ui;
+    wm_focusNext (false);
+}
+
+void
+movetoworkspace (Arg args) {
+    Client* cl = wm_fetchClient (CURRENT_WINDOW);
+    if (args.ui == workspacenum || cl == NULL)
+        return;
+    assert (!cl->minimized);
+
+    cl->workspace = args.ui;
+    ignorenextunmap = true;
+    XMoveWindow (dpy, cl->window, -3840, -2160);
+    wm_focusNext (false);
+}
 
 const keyChord keyBinds[N_KEY_BINDS] = {
-    { .modifier = Mod4Mask | ShiftMask  , .key = "e"                    , .cmd = exit_wm    , .args = NULL},
-    { .modifier = Mod4Mask              , .key = "Return"               , .cmd = spawn      , .args = "alacritty"},
-    { .modifier = Mod4Mask              , .key = "d"                    , .cmd = spawn      , .args = "dmenu_run"},
-    { .modifier = AnyModifier           , .key = "XF86AudioRaiseVolume" , .cmd = spawn      , .args = "pactl set-sink-volume @DEFAULT_SINK@ +5%"},
-    { .modifier = AnyModifier           , .key = "XF86AudioLowerVolume" , .cmd = spawn      , .args = "pactl set-sink-volume @DEFAULT_SINK@ -5%"},
-    { .modifier = AnyModifier           , .key = "XF86AudioMute"        , .cmd = spawn      , .args = "pactl set-source-mute @DEFAULT_SOURCE@ toggle"},
-    { .modifier = Mod4Mask | ShiftMask  , .key = "q"                    , .cmd = killWindow , .args = NULL},
-    { .modifier = Mod4Mask | ShiftMask  , .key = "Return"               , .cmd = spawn      , .args = "alacritty -e bash -c CAD.sh"},
-    { .modifier = Mod4Mask              , .key = "q"                    , .cmd = minimize   , .args = NULL},
-    { .modifier = Mod4Mask              , .key = "Tab"                  , .cmd = tabwindows , .args = NULL},
+    { .modifier = Mod4Mask | ShiftMask  , .key = "e"                    , .cmd = exit_wm        , .args.vp = NULL },
+    { .modifier = Mod4Mask              , .key = "Return"               , .cmd = spawn          , .args.str= "alacritty"},
+    { .modifier = Mod4Mask              , .key = "d"                    , .cmd = spawn          , .args.str= "dmenu_run"},
+    { .modifier = AnyModifier           , .key = "XF86AudioRaiseVolume" , .cmd = spawn          , .args.str= "pactl set-sink-volume @DEFAULT_SINK@ +5%"},
+    { .modifier = AnyModifier           , .key = "XF86AudioLowerVolume" , .cmd = spawn          , .args.str= "pactl set-sink-volume @DEFAULT_SINK@ -5%"},
+    { .modifier = AnyModifier           , .key = "XF86AudioMute"        , .cmd = spawn          , .args.str= "pactl set-source-mute @DEFAULT_SOURCE@ toggle"},
+    { .modifier = Mod4Mask | ShiftMask  , .key = "q"                    , .cmd = killWindow     , .args.vp = NULL},
+    { .modifier = Mod4Mask | ShiftMask  , .key = "Return"               , .cmd = spawn          , .args.str= "alacritty -e bash -c CAD.sh"},
+    { .modifier = Mod4Mask              , .key = "q"                    , .cmd = minimize       , .args.vp = NULL},
+    { .modifier = Mod4Mask              , .key = "Tab"                  , .cmd = tabwindows     , .args.vp = NULL},
+    { .modifier = Mod4Mask              , .key = "0"                    , .cmd = switchworkspace, .args.ui = 0 },
+    { .modifier = Mod4Mask              , .key = "1"                    , .cmd = switchworkspace, .args.ui = 1 },
+    { .modifier = Mod4Mask              , .key = "2"                    , .cmd = switchworkspace, .args.ui = 2 },
+    { .modifier = Mod4Mask              , .key = "3"                    , .cmd = switchworkspace, .args.ui = 3 },
+    { .modifier = Mod4Mask              , .key = "4"                    , .cmd = switchworkspace, .args.ui = 4 },
+    { .modifier = Mod4Mask              , .key = "5"                    , .cmd = switchworkspace, .args.ui = 5 },
+    { .modifier = Mod4Mask              , .key = "6"                    , .cmd = switchworkspace, .args.ui = 6 },
+    { .modifier = Mod4Mask              , .key = "7"                    , .cmd = switchworkspace, .args.ui = 7 },
+    { .modifier = Mod4Mask              , .key = "8"                    , .cmd = switchworkspace, .args.ui = 8 },
+    { .modifier = Mod4Mask              , .key = "9"                    , .cmd = switchworkspace, .args.ui = 9 },
+    { .modifier = Mod4Mask | ShiftMask  , .key = "0"                    , .cmd = movetoworkspace, .args.ui = 0 },
+    { .modifier = Mod4Mask | ShiftMask  , .key = "1"                    , .cmd = movetoworkspace, .args.ui = 1 },
+    { .modifier = Mod4Mask | ShiftMask  , .key = "2"                    , .cmd = movetoworkspace, .args.ui = 2 },
+    { .modifier = Mod4Mask | ShiftMask  , .key = "3"                    , .cmd = movetoworkspace, .args.ui = 3 },
+    { .modifier = Mod4Mask | ShiftMask  , .key = "4"                    , .cmd = movetoworkspace, .args.ui = 4 },
+    { .modifier = Mod4Mask | ShiftMask  , .key = "5"                    , .cmd = movetoworkspace, .args.ui = 5 },
+    { .modifier = Mod4Mask | ShiftMask  , .key = "6"                    , .cmd = movetoworkspace, .args.ui = 6 },
+    { .modifier = Mod4Mask | ShiftMask  , .key = "7"                    , .cmd = movetoworkspace, .args.ui = 7 },
+    { .modifier = Mod4Mask | ShiftMask  , .key = "8"                    , .cmd = movetoworkspace, .args.ui = 8 },
+    { .modifier = Mod4Mask | ShiftMask  , .key = "9"                    , .cmd = movetoworkspace, .args.ui = 9 },
 };
 
 const mouseBind mouseBinds[N_MOUSE_BINDS] = {
-    { .modifier = NOMODIFIER            , .buttons = Button1, .cmd = focus          , .args = NULL },
-    { .modifier = Mod4Mask              , .buttons = Button1, .cmd = moveWindow     , .args = NULL },
-    { .modifier = Mod4Mask | ShiftMask  , .buttons = Button1, .cmd = resizeWindow   , .args = NULL }
+    { .modifier = NOMODIFIER            , .buttons = Button1, .cmd = focus          , .args.vp = NULL },
+    { .modifier = Mod4Mask              , .buttons = Button1, .cmd = moveWindow     , .args.vp = NULL },
+    { .modifier = Mod4Mask | ShiftMask  , .buttons = Button1, .cmd = resizeWindow   , .args.vp = NULL }
 };

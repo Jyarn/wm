@@ -29,12 +29,14 @@ typedef struct s_client {
     struct s_client* tlNext;
     Window window;
     bool minimized;
+    unsigned int workspace;
 } Client;
 
 extern Display* dpy;
 extern wm_screen defaultScreen;
 extern Client* wm_focus;
 extern Client* activeClients;
+extern unsigned int workspacenum;
 
 bool wm_shouldbeManaged (Window);
 Client* wm_manage (Window);
@@ -43,6 +45,7 @@ void wm_killClient (Window);
 void wm_setFocus (Client*);
 void wm_focusNext (bool);
 void wm_minimize (Client*);
+void wm_show (Client* cl);
 void wm_grabKeys (Window);
 void wm_grabMouse (Window);
 void wm_grabPointerBinds (Window);

@@ -8,6 +8,7 @@ typedef void (*handler)(void);
 void evt_eventHandler (void);
 
 extern bool evt_run;
+extern bool ignorenextunmap;
 extern XEvent evt_currentEvent;
 extern handler evt_handlers[LASTEvent];
 

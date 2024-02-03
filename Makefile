@@ -1,4 +1,4 @@
-CC=clang
+CC=gcc
 CFLAGS=-g -Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes
 FLAGS=-D__DEBUG__
 EXE=wm
@@ -12,6 +12,8 @@ all: $(EXE)
 $(EXE): $(OBJ)
 	$(CC) $(LIB) $(OBJ) -o $(EXE)
 
+config.o: config.c *.h
+	$(CC) -g -Wall -Wextra $(INC) -c $< -o $@
 %.o: %.c *.h
 	$(CC) $(CFLAGS) $(FLAGS) $(INC) -c $< -o $@
 
