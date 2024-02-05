@@ -200,14 +200,15 @@ switchworkspace (Arg args)
     while (cur) {
         if (cur->workspace == args.ui && !cur->minimized)
             XMoveWindow (dpy, cur->window, cur->x, cur->y);
-        else if (!cur->minimized && cur->workspace == workspacenum) {
+        else if (!cur->minimized && cur->workspace == workspacenum && cur->workspace != WORKSPACE_ALWAYSON) {
             XMoveWindow (dpy, cur->window, -3840, -2160); // move to the shadow zone
         }
         cur = cur->next;
     }
 
     workspacenum = args.ui;
-    wm_focusNext (false);
+    if (wm_focus->workspace != WORKSPACE_ALWAYSON)
+        wm_focusNext (false);
 }
 
 void
@@ -219,8 +220,10 @@ movetoworkspace (Arg args) {
 
     cl->workspace = args.ui;
     ignorenextunmap = true;
-    XMoveWindow (dpy, cl->window, -3840, -2160);
-    wm_focusNext (false);
+    if (args.ui != WORKSPACE_ALWAYSON) {
+        XMoveWindow (dpy, cl->window, -3840, -2160);
+        wm_focusNext (false);
+    }
 }
 
 const keyChord keyBinds[N_KEY_BINDS] = {
@@ -234,7 +237,7 @@ const keyChord keyBinds[N_KEY_BINDS] = {
     { .modifier = Mod4Mask | ShiftMask  , .key = "Return"               , .cmd = spawn          , .args.str= "alacritty -e bash -c CAD.sh"},
     { .modifier = Mod4Mask              , .key = "q"                    , .cmd = minimize       , .args.vp = NULL},
     { .modifier = Mod4Mask              , .key = "Tab"                  , .cmd = tabwindows     , .args.vp = NULL},
-    { .modifier = Mod4Mask              , .key = "0"                    , .cmd = switchworkspace, .args.ui = 0 },
+    { .modifier = Mod4Mask              , .key = "0"                    , .cmd = switchworkspace, .args.ui = 0},
     { .modifier = Mod4Mask              , .key = "1"                    , .cmd = switchworkspace, .args.ui = 1 },
     { .modifier = Mod4Mask              , .key = "2"                    , .cmd = switchworkspace, .args.ui = 2 },
     { .modifier = Mod4Mask              , .key = "3"                    , .cmd = switchworkspace, .args.ui = 3 },

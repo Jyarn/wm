@@ -46,7 +46,7 @@ start_wm (void)
 	XSetWindowAttributes winAttrib;
 	winAttrib.event_mask = ROOT_MASK;
 	XSelectInput (dpy, defaultScreen.root, winAttrib.event_mask);
-    workspacenum = 0;
+    workspacenum = 1;
 }
 
 /*
@@ -262,7 +262,7 @@ wm_focusNext (bool focusMinimized) {
 		do {
 			if (!temp)
 				temp = activeClients;
-			else if (workspacenum == temp->workspace && (focusMinimized || !temp->minimized)) {
+			else if ((workspacenum == temp->workspace || temp->workspace == WORKSPACE_ALWAYSON) && (focusMinimized || !temp->minimized)) {
                 XMoveWindow (dpy, temp->window, temp->x, temp->y);
                 temp->minimized = false;
 				wm_setFocus (temp);
