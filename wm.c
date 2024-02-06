@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <string.h>
+#include <X11/extensions/Xrandr.h>
 
 #include "wm.h"
 #include "event.h"
@@ -19,11 +20,32 @@ Client* wm_focus;
 Client* activeClients;
 unsigned int workspacenum;
 
+
+
 void start_wm (void);
 void cleanup (void);
+void detectMonitors (void);
 
 
 
+
+void
+detectMonitors (void)
+{
+	XRRScreenResources* srec = XRRGetScreenResourcesCurrent (dpy, defaultScreen.root);
+	for (int i = 0; i < srec->noutput; i++) {
+		XRROutputInfo* oi = XRRGetOutputInfo (dpy, srec, srec->outputs[i]);
+		if (oi->connection == RR_Connected) {
+			XRRCrtcInfo* cinfo = XRRGetCrtcInfo (dpy, srec, oi->crtc);
+			dbg_log ("[ INFO ] %s: (x:%d,y:%d)\n", oi->name, cinfo->width, cinfo->height);
+			XRRFreeCrtcInfo (cinfo);
+		}
+
+		XRRFreeOutputInfo (oi);
+	}
+
+	XRRFreeScreenResources (srec);
+}
 
 /*
  * Initialize default screen, and set the event mask for the event mask
@@ -39,14 +61,17 @@ start_wm (void)
 	// init default screen
 	defaultScreen.screen = DefaultScreen (dpy);
 	defaultScreen.root = RootWindow (dpy, defaultScreen.screen);
-	defaultScreen.w = DisplayWidth (dpy, defaultScreen.screen);
-	defaultScreen.h = DisplayHeight (dpy, defaultScreen.screen);
 
 	// configure event masks
 	XSetWindowAttributes winAttrib;
 	winAttrib.event_mask = ROOT_MASK;
 	XSelectInput (dpy, defaultScreen.root, winAttrib.event_mask);
+<<<<<<< HEAD
     workspacenum = 1;
+=======
+    workspacenum = 0;
+	detectMonitors ();
+>>>>>>> 0fb040f (merge upstream)
 }
 
 /*
@@ -208,6 +233,7 @@ wm_manage (Window w) {
 
 	// init new client
 	newClient->window = w;
+	newClient->type = floating;
 
 	// set event mask
 	XSelectInput (dpy, w, WIN_MASK);
@@ -231,6 +257,7 @@ wm_unmanage (Window w) {
 				activeClients = cur->next;
 
 			dbg_log ("[ INFO ] wm_unmanage\n");
+			tl_remove (cur);
 			free (cur);
 			return;
 		}

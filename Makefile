@@ -5,7 +5,7 @@ EXE=wm
 
 OBJ=wm.o event.o config.o debug.o tl.o
 INC=-I/usr/include
-LIB=-lX11
+LIB=-lX11 -lXrandr
 
 all: $(EXE)
 

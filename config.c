@@ -11,6 +11,7 @@
 #include "util.h"
 #include "config.h"
 #include "event.h"
+#include "tl.h"
 
 
 void
@@ -226,6 +227,26 @@ movetoworkspace (Arg args) {
     }
 }
 
+void
+toggleFloating (Arg args UNUSED) {
+    tl_remove (wm_focus);
+}
+
+void
+toggleTiling (Arg args UNUSED) {
+    tl_manage (wm_focus);
+}
+
+void
+incStack (Arg args UNUSED) {
+    tl_nMasterIncDec (1);
+}
+
+void
+decStack (Arg args UNUSED) {
+    tl_nMasterIncDec (-1);
+}
+
 const keyChord keyBinds[N_KEY_BINDS] = {
     { .modifier = Mod4Mask | ShiftMask  , .key = "e"                    , .cmd = exit_wm        , .args.vp = NULL },
     { .modifier = Mod4Mask              , .key = "Return"               , .cmd = spawn          , .args.str= "alacritty"},
@@ -257,6 +278,10 @@ const keyChord keyBinds[N_KEY_BINDS] = {
     { .modifier = Mod4Mask | ShiftMask  , .key = "7"                    , .cmd = movetoworkspace, .args.ui = 7 },
     { .modifier = Mod4Mask | ShiftMask  , .key = "8"                    , .cmd = movetoworkspace, .args.ui = 8 },
     { .modifier = Mod4Mask | ShiftMask  , .key = "9"                    , .cmd = movetoworkspace, .args.ui = 9 },
+    { .modifier = Mod4Mask              , .key = "w"                    , .cmd = toggleTiling   , .args.vp = NULL },
+    { .modifier = Mod4Mask              , .key = "e"                    , .cmd = toggleFloating , .args.vp = NULL },
+    { .modifier = Mod4Mask              , .key = "i"                    , .cmd = incStack       , .args.vp = NULL },
+    { .modifier = Mod4Mask              , .key = "o"                    , .cmd = decStack       , .args.vp = NULL }
 };
 
 const mouseBind mouseBinds[N_MOUSE_BINDS] = {
