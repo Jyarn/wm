@@ -66,12 +66,9 @@ start_wm (void)
 	XSetWindowAttributes winAttrib;
 	winAttrib.event_mask = ROOT_MASK;
 	XSelectInput (dpy, defaultScreen.root, winAttrib.event_mask);
-<<<<<<< HEAD
-    workspacenum = 1;
-=======
-    workspacenum = 0;
+    	workspacenum = 1;
+    	workspacenum = 0;
 	detectMonitors ();
->>>>>>> 0fb040f (merge upstream)
 }
 
 /*
@@ -229,7 +226,7 @@ wm_manage (Window w) {
 	XGetGeometry (dpy, w, &root, &newClient->x, &newClient->y, &t_w, &t_h, &borderWidth, &depth);
 	newClient->w = (int)t_w;
 	newClient->h = (int)t_h;
-    newClient->workspace = workspacenum;
+	newClient->workspace = workspacenum;
 
 	// init new client
 	newClient->window = w;
@@ -237,7 +234,7 @@ wm_manage (Window w) {
 
 	// set event mask
 	XSelectInput (dpy, w, WIN_MASK);
-    XSetWindowBorderWidth (dpy, w, BORDERWIDTH);
+	XSetWindowBorderWidth (dpy, w, BORDERWIDTH);
 	return newClient;
 }
 
@@ -320,7 +317,7 @@ void
 wm_show (Client* cl) {
     assert (cl != NULL);
     if (!cl->minimized)
-        return;
+	return;
 
     XMoveWindow (dpy, cl->window, cl->x, cl->y);
 	cl->minimized = false;
