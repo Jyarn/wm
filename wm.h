@@ -1,8 +1,10 @@
 #ifndef __WM__H
 #define __WM__H
+
 #include <X11/Xlib.h>
 #include <stdbool.h>
 #include <stdarg.h>
+
 
 #define ROOT_MASK SubstructureRedirectMask | SubstructureNotifyMask | KeyPressMask | KeyReleaseMask | ButtonPressMask | PointerMotionMask
 #define WIN_MASK StructureNotifyMask
@@ -13,11 +15,21 @@
 #define WM_UNGRABPOINTER() XUngrabPointer (dpy, CurrentTime)
 #define CURRENT_WINDOW evt_currentEvent.xany.window
 
+typedef enum {
+    master,
+    slave,
+    floating,
+} ClientType;
+
+typedef struct {
+    int x;
+    int y;
+} Monitor;
+
 typedef struct {
     int screen;
-    int w;
-    int h;
     Window root;
+    Monitor* mons;
 } wm_screen;
 
 typedef struct s_client {
@@ -26,7 +38,7 @@ typedef struct s_client {
     int x;
     int y;
     struct s_client* next;
-    struct s_client* tlNext;
+    ClientType type;
     Window window;
     bool minimized;
     unsigned int workspace;

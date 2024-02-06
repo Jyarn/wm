@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 [ ] Window manager
  [x] substructre redirection??
  [x] create event handler
@@ -26,6 +27,36 @@
  [ ] key chording
   [ ] replace input handling with xkb (probably not)
  [ ] replace xlib with xcb
+=======
+- [ ] Window manager
+  - [X] substructre redirection??
+  - [X] create event handler
+  - [X] window focus changing
+  - [X] override Redirect Flag
+  - [X] logging
+  - [X] create error handler
+  - [X] basic logging
+  - [X] arg processing
+  - [X] floating (tinywm-ish)
+    - [X] moving windows
+    - [X] resizing windows
+    - [X] hiding windows
+  - [ ] tiling
+    - [X] stack management
+    - [ ] override floating managment
+  - [ ] fullscreen
+  - [ ] multiple workspaces
+  - [ ] USE flags
+  - [ ] compositing (xcomposite)
+  - [ ] CLI
+  - [ ] multi-monitor support (randr)
+  - [ ] config file / hot reloading??
+  - [ ] EWMH compliance
+  - [ ] ICCM compliance
+  - [ ] key chording
+  - [ ] replace xlib with xcb
+  - [X] optimize memory use
+>>>>>>> 0fb040f (merge upstream)
 
 toolbar
 
@@ -34,34 +65,45 @@ animated wallpaper
 clickable desktop icons (kind of like windows)
 
 ISSUES:
- [ ] easyeffects window not appearing
-      notes: not running, or slowing down execution seems to make it appear => event handler issue
- [x] alacritty crashing the window manager
-      notes: no clue what happened but it got fixed. now whenever it crashes it doesn't give me any debug info :D
- [x] typing into (completley?) overlapped windows
-      note: looks like it only breaks if easyeffects isn't running
-            segfault wm.c:158
- [x] memory leak at wm.c:204
-      notes: not closing log file
- [x] Enabling XSelectInput for newly managed windows causes a BadAccess error when opening alacritty
-      notes: it looks like the error is coming from XNextEvent instead of XSelectInput which is weird (need to verify on desktop)
-             On laptop, wm doesn't even start I assume this is the same issue
-             On laptop, changing the mask in wm_manage to the one used in dwm seems to fix the issue
- [x] Closing alacritty causes a BadWindow
- [x] dragging stops X from sending events to client D:
-      notes:
-          jesus christ finally fixed it
- [x] only able to move a window once, after which motion handler doesn't seem to receive events
-      notes:
-          cleanup is not always run before if a motion func does not reset
- [x] movewindow warps the top left corner of the window to the mouse
-      notes:
-          it looks funny
- [x] button presses do not register for certain windows
-     notes: changed grabmode in grabMouse to Sync
+[ ] easyeffects window not appearing
+notes: not running, or slowing down execution seems to make it appear => event handler issue
+[x] alacritty crashing the window manager
+notes: no clue what happened but it got fixed. now whenever it crashes it doesn't give me any debug info :D
+[x] typing into (completley?) overlapped windows
+note: looks like it only breaks if easyeffects isn't running
+segfault wm.c:158
+[x] memory leak at wm.c:204
+notes: not closing log file
+[x] Enabling XSelectInput for newly managed windows causes a BadAccess error when opening alacritty
+notes: it looks like the error is coming from XNextEvent instead of XSelectInput which is weird (need to verify on desktop)
+On laptop, wm doesn't even start I assume this is the same issue
+On laptop, changing the mask in wm_manage to the one used in dwm seems to fix the issue
+[x] Closing alacritty causes a BadWindow
+[x] dragging stops X from sending events to client D:
+notes:
+jesus christ finally fixed it
+[x] only able to move a window once, after which motion handler doesn't seem to receive events
+notes:
+cleanup is not always run before if a motion func does not reset
+[x] movewindow warps the top left corner of the window to the mouse
+notes:
+it looks funny
+[x] button presses do not register for certain windows
+notes: changed grabmode in grabMouse to Sync
+[ ] unable to select text
 
 REFACTORS:
+<<<<<<< HEAD
  [x] Cleanup coding style
  [x] Refactor out move binds
  [x] Remove redundant function args
  [x] Refactor user function signature to allow use a union instead of a void pointer
+=======
+[x] Cleanup coding style
+[x] Refactor out move binds
+[x] Remove redundant function args
+
+OPTIMIZATIONS:
+[ ] Remove geom in Client struct
+[ ] Optimize stack managment for +-1 incs
+>>>>>>> 0fb040f (merge upstream)
