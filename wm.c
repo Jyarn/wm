@@ -6,6 +6,7 @@
 #include <X11/extensions/Xrandr.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <X11/cursorfont.h>
 
 #include "wm.h"
 #include "event.h"
@@ -63,6 +64,10 @@ start_wm (void)
     if (children)
         XFree (children);
     wm_setFocus (activeClients);
+    // set cursor
+    Cursor cursor = XCreateFontCursor (dpy, XC_sailboat);
+    XDefineCursor (dpy, defaultScreen.root, cursor);
+    XFreeCursor (dpy, cursor);
 }
 
 /*
@@ -242,6 +247,11 @@ wm_manage (Window w) {
 	// set event mask
 	XSelectInput (dpy, w, WIN_MASK);
 	XSetWindowBorderWidth (dpy, w, BORDERWIDTH);
+
+    // set cursor
+    Cursor cursor = XCreateFontCursor (dpy, XC_sailboat);
+    XDefineCursor (dpy, w, cursor);
+    XFreeCursor (dpy, cursor);
 	return newClient;
 }
 
@@ -291,8 +301,8 @@ wm_focusNext (bool focusMinimized) {
 	if (!activeClients) {
 		wm_setFocus (NULL);
 		return;
-	}
-	else {
+
+	} else {
 		Client* temp = (wm_focus != NULL) ? wm_focus->next : NULL;
 		do {
 			if (!temp)
@@ -311,7 +321,7 @@ wm_focusNext (bool focusMinimized) {
 			}
 			else
 				temp = temp->next;
-		} while (temp != wm_focus || (!wm_focus && !temp));
+		} while (temp != wm_focus && (wm_focus || temp));
 
 		wm_setFocus (NULL);
 	}

@@ -11,7 +11,12 @@
 #define MOUSE_MASK ButtonPressMask | ButtonReleaseMask
 #define MOTION_MASK PointerMotionMask | ButtonPressMask | ButtonReleaseMask
 
-#define WM_GRABPOINTER() XGrabPointer (dpy, defaultScreen.root, False, MOTION_MASK, GrabModeAsync, GrabModeAsync, None, None, CurrentTime)
+#define WM_GRABPOINTER(cursor) { \
+        Cursor _cursor = XCreateFontCursor (dpy, cursor); \
+        XGrabPointer (dpy, defaultScreen.root, False, MOTION_MASK, GrabModeAsync, GrabModeAsync, None, _cursor, CurrentTime); \
+        XFreeCursor (dpy, _cursor); \
+    }
+
 #define WM_UNGRABPOINTER() XUngrabPointer (dpy, CurrentTime)
 #define CURRENT_WINDOW evt_currentEvent.xany.window
 

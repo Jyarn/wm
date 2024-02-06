@@ -39,12 +39,12 @@ onMapReq (void) {
 	dbg_log ("\n[ INFO ] map request %d\n", ev->window);
 	XMapWindow (dpy, ev->window);
 
-	if (wm_shouldbeManaged (ev->window)) {
+//	if (wm_shouldbeManaged (ev->window)) {
 		Client* cl = wm_manage (ev->window);
 		wm_grabKeys (ev->window);
 		wm_grabMouse (ev->window);
 		wm_setFocus (cl);
-	}
+//	}
 }
 
 void

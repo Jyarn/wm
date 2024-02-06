@@ -5,6 +5,7 @@
 #include <string.h>
 #include <stdint.h>
 #include <assert.h>
+#include <X11/cursorfont.h>
 
 #include "debug.h"
 #include "wm.h"
@@ -88,9 +89,19 @@ void
 moveWindow (Arg args UNUSED) {
     Client* cl = wm_fetchClient (CURRENT_WINDOW);
 
-    if (!cl || cl->fullscreen)
+    if (!cl)
         return;
 
+    if (cl->fullscreen) {
+        cl->fullscreen = false;
+        Monitor mon = monitors[cl->monnum];
+        cl->w = mon.w - 2*FULLSCREENGAP;
+        cl->h = mon.h - 2*FULLSCREENGAP;
+        cl->x = mon.x - BORDERWIDTH + FULLSCREENGAP;
+        cl->y = mon.y - BORDERWIDTH + FULLSCREENGAP;
+    }
+
+    wm_setFocus (cl);
     XMotionEvent m;
     handler h;
     Monitor mon = CURRENTMON(cl);
@@ -98,7 +109,7 @@ moveWindow (Arg args UNUSED) {
     int prevX = evt_currentEvent.xbutton.x_root;
     int prevY = evt_currentEvent.xbutton.y_root;
 
-    WM_GRABPOINTER ();
+    WM_GRABPOINTER (XC_fleur);
     for (;;) {
         XNextEvent (dpy, &evt_currentEvent);
         switch (evt_currentEvent.type) {
@@ -144,20 +155,36 @@ void
 resizeWindow (Arg args UNUSED) {
     XButtonPressedEvent ev = evt_currentEvent.xbutton;
     Client* cl = wm_fetchClient (ev.window);
-    if (!cl || cl->fullscreen)
+    if (!cl)
         return;
 
+    if (cl->fullscreen) {
+        cl->fullscreen = false;
+        Monitor mon = monitors[cl->monnum];
+        cl->w = mon.w - 2*FULLSCREENGAP;
+        cl->h = mon.h - 2*FULLSCREENGAP;
+        cl->x = mon.x - BORDERWIDTH + FULLSCREENGAP;
+        cl->y = mon.y - BORDERWIDTH + FULLSCREENGAP;
+    }
+
+    wm_setFocus (cl);
     const bool ulx = ev.x*2 < cl->w;
     const bool uly = ev.y*2 < cl->h;
 
     int prevX = ulx ? cl->x : cl->x + cl->w;
     int prevY = uly ? cl->y : cl->y + cl->h;
 
+    if (ulx == uly) {
+        WM_GRABPOINTER(XC_bottom_right_corner);
+
+    } else {
+        WM_GRABPOINTER(XC_bottom_left_corner);
+    }
+
     XWarpPointer (dpy, defaultScreen.root, None, 0, 0, 0, 0, prevX - ev.x_root, prevY - ev.y_root);
 
     XMotionEvent mov;
     handler h;
-    WM_GRABPOINTER ();
     for (;;) {
         XNextEvent (dpy, &evt_currentEvent);
         switch (evt_currentEvent.type) {
@@ -195,7 +222,6 @@ resizeWindow (Arg args UNUSED) {
 
 EXIT:
     WM_UNGRABPOINTER ();
-    return;
 }
 
 void
@@ -311,7 +337,7 @@ const keyChord keyBinds[N_KEY_BINDS] = {
     { .modifier = AnyModifier           , .key = "XF86AudioLowerVolume" , .cmd = spawn          , .args.str= "pactl set-sink-volume @DEFAULT_SINK@ -5%"},
     { .modifier = AnyModifier           , .key = "XF86AudioMute"        , .cmd = spawn          , .args.str= "pactl set-source-mute @DEFAULT_SOURCE@ toggle"},
     { .modifier = Mod4Mask | ShiftMask  , .key = "q"                    , .cmd = killWindow     , .args.vp = NULL},
-    { .modifier = Mod4Mask | ShiftMask  , .key = "Return"               , .cmd = spawn          , .args.str= "alacritty -e bash -c ~/Scripts/CAD.sh"},
+    { .modifier = Mod4Mask | ShiftMask  , .key = "Return"               , .cmd = spawn          , .args.str= "alacritty -e bash -c ~/.scripts/CAD.sh"},
     { .modifier = Mod4Mask              , .key = "q"                    , .cmd = minimize       , .args.vp = NULL},
     { .modifier = Mod4Mask              , .key = "j"                    , .cmd = tabwindows     , .args.b  = false },
     { .modifier = Mod4Mask | ShiftMask  , .key = "j"                    , .cmd = tabwindows     , .args.b  = true },
@@ -343,10 +369,11 @@ const keyChord keyBinds[N_KEY_BINDS] = {
 const mouseBind mouseBinds[N_MOUSE_BINDS] = {
     { .modifier = NOMODIFIER            , .buttons = Button1, .cmd = focus          , .args.vp = NULL },
     { .modifier = Mod4Mask              , .buttons = Button1, .cmd = moveWindow     , .args.vp = NULL },
-    { .modifier = Mod4Mask | ShiftMask  , .buttons = Button1, .cmd = resizeWindow   , .args.vp = NULL }
+    { .modifier = Mod4Mask              , .buttons = Button3, .cmd = resizeWindow   , .args.vp = NULL }
 };
 
 
 Monitor monitors[NMON] = {
-    { .x = 0  , .y = 0    , .w = 1920, .h = 1080 }
+    { .x = 1920 , .y = 0    , .w = 1920, .h = 1080 },
+    { .x = 0    , .y = 0    , .w = 1920, .h = 1080 },
 };

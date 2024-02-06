@@ -13,7 +13,7 @@
 #define FULLSCREENGAP 30
 #define BORDERWIDTH 1
 #define WORKSPACE_ALWAYSON 0
-#define NMON 1
+#define NMON 2
 #define SNAPDIST 30
 #define CURRENTMON(cl) (monitors[cl->monnum])
 

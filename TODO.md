@@ -15,6 +15,7 @@
 - [x] fullscreen
 - [x] multiple workspaces
 - [ ] borders
+- [x] cursor
 - [ ] reparenting
 - [ ] compositing (xcomposite)
  - [ ] CLI
@@ -26,7 +27,6 @@
 - [ ] key chording
 - [ ] replace xlib with xcb
 - [ ] quality of life features
- - [x] snapping windows
  - [x] seperate tabbing for hidden and non-hidden windows
 
 toolbar
@@ -50,6 +50,7 @@ ISSUES:
   4. Try to close it
   1. Open Firefox
   2. ...
+  1. Open easyeffects
 [x] easyeffects window not appearing
 notes: not running, or slowing down execution seems to make it appear => event handler issue
        setup configure request (broken again)
@@ -81,7 +82,7 @@ notes:
 it looks funny
 [x] button presses do not register for certain windows
 notes: changed grabmode in grabMouse to Sync
-[ ] unable to select text
+[x] unable to select text
 
 REFACTORS:
  [x] Cleanup coding style
