@@ -12,13 +12,14 @@
   [x] resizing windows
   [x] hiding windows
  [ ] tiling
+ [ ] multi-monitor support (randr)
  [ ] fullscreen
- [ ] multiple workspaces
- [ ] USE flags
+ [x] multiple workspaces
  [ ] reparenting
  [ ] compositing (xcomposite)
  [ ] CLI
- [ ] multi-monitor support (randr)
+  [x] --debug flag
+  [ ] --log flag
  [ ] config file / hot reloading??
  [ ] EWMH compliance
  [ ] ICCM compliance
@@ -63,3 +64,4 @@ REFACTORS:
  [x] Cleanup coding style
  [x] Refactor out move binds
  [x] Remove redundant function args
+ [x] Refactor user function signature to allow use a union instead of a void pointer
