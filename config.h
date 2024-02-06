@@ -10,6 +10,7 @@
 #define N_MOUSE_BINDS 3
 #define NOMODIFIER 0
 #define BORDERWIDTH 3
+#define WORKSPACE_ALWAYSON 0
 
 typedef union {
     unsigned int ui;

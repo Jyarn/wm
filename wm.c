@@ -67,6 +67,8 @@ start_wm (void)
 	winAttrib.event_mask = ROOT_MASK;
 	XSelectInput (dpy, defaultScreen.root, winAttrib.event_mask);
     workspacenum = 0;
+    workspacenum = 1;
+    workspacenum = 0;
 	detectMonitors ();
 }
 
@@ -225,7 +227,7 @@ wm_manage (Window w) {
 	XGetGeometry (dpy, w, &root, &newClient->x, &newClient->y, &t_w, &t_h, &borderWidth, &depth);
 	newClient->w = (int)t_w;
 	newClient->h = (int)t_h;
-    newClient->workspace = workspacenum;
+	newClient->workspace = workspacenum;
 
 	// init new client
 	newClient->window = w;
@@ -233,7 +235,7 @@ wm_manage (Window w) {
 
 	// set event mask
 	XSelectInput (dpy, w, WIN_MASK);
-    XSetWindowBorderWidth (dpy, w, BORDERWIDTH);
+	XSetWindowBorderWidth (dpy, w, BORDERWIDTH);
 	return newClient;
 }
 
@@ -285,7 +287,7 @@ wm_focusNext (bool focusMinimized) {
 		do {
 			if (!temp)
 				temp = activeClients;
-			else if (workspacenum == temp->workspace && (focusMinimized || !temp->minimized)) {
+			else if ((workspacenum == temp->workspace || temp->workspace == WORKSPACE_ALWAYSON) && (focusMinimized || !temp->minimized)) {
                 XMoveWindow (dpy, temp->window, temp->x, temp->y);
                 temp->minimized = false;
 				wm_setFocus (temp);
@@ -316,7 +318,7 @@ void
 wm_show (Client* cl) {
     assert (cl != NULL);
     if (!cl->minimized)
-        return;
+	return;
 
     XMoveWindow (dpy, cl->window, cl->x, cl->y);
 	cl->minimized = false;
