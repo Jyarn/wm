@@ -1,33 +1,30 @@
-<<<<<<< HEAD
-[ ] Window manager
- [x] substructre redirection??
- [x] create event handler
- [x] window focus changing
- [x] override Redirect Flag
- [x] logging
-  [x] create error handler
-  [x] basic logging
- [x] arg processing
- [x] floating (tinywm-ish)
-  [x] moving windows
-  [x] resizing windows
-  [x] hiding windows
- [ ] tiling
- [ ] multi-monitor support (randr)
- [ ] fullscreen
- [x] multiple workspaces
- [ ] reparenting
- [ ] compositing (xcomposite)
- [ ] CLI
-  [x] --debug flag
-  [ ] --log flag
- [ ] config file / hot reloading??
- [ ] EWMH compliance
- [ ] ICCM compliance
- [ ] key chording
-  [ ] replace input handling with xkb (probably not)
- [ ] replace xlib with xcb
-=======
+- [ ] Window manager
+ - [x] substructre redirection??
+ - [x] create event handler
+ - [x] window focus changing
+ - [x] override Redirect Flag
+ - [x] logging
+  - [x] create error handler
+  - [x] basic logging
+- [x] arg processing
+- [x] floating (tinywm-ish)
+ - [x] moving windows
+ - [x] resizing windows
+ - [x] hiding windows
+- [ ] tiling
+- [ ] multi-monitor support (randr)
+- [ ] fullscreen
+- [x] multiple workspaces
+- [ ] reparenting
+- [ ] compositing (xcomposite)
+ - [ ] CLI
+ - [x] --debug flag
+ - [ ] --log flag
+- [ ] config file / hot reloading??
+- [ ] EWMH compliance
+- [ ] ICCM compliance
+- [ ] key chording
+- [ ] replace xlib with xcb
 - [ ] Window manager
   - [X] substructre redirection??
   - [X] create event handler
@@ -43,7 +40,7 @@
     - [X] hiding windows
   - [ ] tiling
     - [X] stack management
-    - [ ] override floating managment
+    - [ ] override floating management
   - [ ] fullscreen
   - [ ] multiple workspaces
   - [ ] USE flags
@@ -56,13 +53,14 @@
   - [ ] key chording
   - [ ] replace xlib with xcb
   - [X] optimize memory use
->>>>>>> 0fb040f (merge upstream)
 
 toolbar
 
 animated wallpaper
 
 clickable desktop icons (kind of like windows)
+
+fluid simulation wallpaper
 
 ISSUES:
 [ ] easyeffects window not appearing
@@ -93,12 +91,10 @@ notes: changed grabmode in grabMouse to Sync
 [ ] unable to select text
 
 REFACTORS:
-<<<<<<< HEAD
  [x] Cleanup coding style
  [x] Refactor out move binds
  [x] Remove redundant function args
  [x] Refactor user function signature to allow use a union instead of a void pointer
-=======
 [x] Cleanup coding style
 [x] Refactor out move binds
 [x] Remove redundant function args
@@ -106,4 +102,3 @@ REFACTORS:
 OPTIMIZATIONS:
 [ ] Remove geom in Client struct
 [ ] Optimize stack managment for +-1 incs
->>>>>>> 0fb040f (merge upstream)
