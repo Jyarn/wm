@@ -54,7 +54,8 @@ onCircReq (void) {
 
 void
 onWinConfig (void) {
-
+    XConfigureRequestEvent* ev = &evt_currentEvent.xconfigurerequest;
+    XMoveResizeWindow (dpy, ev->window, ev->x, ev->y, ev->width, ev->height);
 }
 
 void

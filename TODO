@@ -64,8 +64,9 @@ clickable desktop icons (kind of like windows)
 fluid simulation wallpaper
 
 ISSUES:
-[ ] easyeffects window not appearing
+[x] easyeffects window not appearing
 notes: not running, or slowing down execution seems to make it appear => event handler issue
+       setup configure request
 [x] alacritty crashing the window manager
 notes: no clue what happened but it got fixed. now whenever it crashes it doesn't give me any debug info :D
 [x] typing into (completley?) overlapped windows
