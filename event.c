@@ -55,7 +55,15 @@ onCircReq (void) {
 void
 onWinConfig (void) {
     XConfigureRequestEvent* ev = &evt_currentEvent.xconfigurerequest;
-    XMoveResizeWindow (dpy, ev->window, ev->x, ev->y, ev->width, ev->height);
+    dbg_log ("[ INFO ] config request");
+    Client* cl = wm_fetchClient (ev->window);
+    if (cl) {
+        cl->x = ev->x;
+        cl->y = ev->y;
+        cl->w = ev->width;
+        cl->h = ev->height;
+        XMoveResizeWindow (dpy, ev->window, ev->x, ev->y, ev->width, ev->height);
+    }
 }
 
 void
