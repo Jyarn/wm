@@ -5,6 +5,7 @@
 #include <errno.h>
 #include <string.h>
 #include <X11/extensions/Xrandr.h>
+#include <sys/stat.h>
 
 #include "wm.h"
 #include "event.h"
@@ -21,13 +22,10 @@ Client* activeClients;
 unsigned int workspacenum;
 
 
-
 void start_wm (void);
 void cleanup (void);
 void detectMonitors (void);
-
-
-
+void processcmdargs (int argc, char** argv);
 
 void
 detectMonitors (void)
@@ -335,27 +333,43 @@ wm_minimize (Client* cl) {
     cl->minimized = true;
 }
 
-int
-main (int argc, char** argv) {
-	dbg_init ();
-	dbg_log ("[ INFO ]	wm starting\n");
+void
+processcmdargs (int argc, char** argv)
+{
+    char* logfile = NULL;
 
 	for (int i = 1; i < argc; i++) {
-#ifdef __DEBUG__
-	if (!strcmp (argv[i], "--debug")) {
-		int a = 1;
-		while (a) {}
-		dbg_handlerOn ();
-	}
-#endif
-	}
+        if (!strcmp (argv[i], "--debug")) {
+            int a = 1;
+            while (a) {}
+        } else if (!strncmp (argv[i], "--log", 6)) {
+            if (i + 1 >= argc || argv[i+1][0] == '-')
+                continue;
+
+            struct stat tempstat;
+            if (stat (argv[i+1], &tempstat) >= 0  && S_ISREG(tempstat.st_mode))
+                logfile = argv[i+1];
+            else {
+                fprintf (stderr, "[ ERROR ]: invalid log file\n");
+                exit (1);
+            }
+        }
+    }
+
+    dbg_init (logfile);
+    dbg_handlerOn ();
+}
 
 
+int
+main (int argc, char** argv) {
+    processcmdargs (argc, argv);
+	dbg_log ("[ INFO ]	wm starting\n");
 	start_wm ();
 	dbg_log ("[ INFO ] root = %d\n", defaultScreen.root);
 	evt_eventHandler ();
 	cleanup ();
-	dbg_log ("[ INFO ] normal exit");
+	dbg_log ("[ INFO ] normal exit\n");
 	dbg_close ();
 	return 0;
 }

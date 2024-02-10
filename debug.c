@@ -17,6 +17,9 @@ int handlerIgnore (Display*, XErrorEvent*);
 int handlerOff (Display* dsp, XErrorEvent* event);
 
 void dbg_log (const char* str, ...) {
+    if (logFile == NULL)
+        return;
+
     va_list args;
     va_start (args, str);
 
@@ -24,13 +27,20 @@ void dbg_log (const char* str, ...) {
     fflush (logFile);
 }
 
-void dbg_init (void) {
-    logFile = fopen ("wm.log", "w");
+void dbg_init (char* file) {
+    if (file != NULL) {
+        logFile = fopen (file, "w");
+        dbg_log ("[ INFO ] begin log\n");
+    }
+    else
+        logFile = NULL;
+
     handlerDefault = XSetErrorHandler (handlerUser);
 }
 
 void dbg_close (void) {
-    fclose (logFile);
+    if (logFile)
+        fclose (logFile);
 }
 
 int handlerUser (Display* dsp, XErrorEvent* event) {
