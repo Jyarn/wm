@@ -291,6 +291,7 @@ wm_setFocus (Client* cl) {
 	dbg_log ("[ INFO ] wm_setfocus w = %d\n", cl->window);
 	wm_focus = cl;
 	XSetInputFocus (dpy, cl->window, RevertToPointerRoot, CurrentTime);
+    XRaiseWindow (dpy, cl->window);
 }
 
 void
