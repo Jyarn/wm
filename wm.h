@@ -43,6 +43,7 @@ typedef struct s_client {
     ClientType type;
     Window window;
     bool minimized;
+    unsigned int monnum;
     unsigned int workspace;
 } Client;
 
@@ -51,7 +52,7 @@ extern wm_screen defaultScreen;
 extern Client* wm_focus;
 extern Client* activeClients;
 extern unsigned int workspacenum;
-extern Monitor const * currentmon;
+extern unsigned int currentmon;
 
 bool wm_shouldbeManaged (Window);
 Client* wm_manage (Window);
@@ -67,5 +68,6 @@ void wm_grabPointerBinds (Window);
 void wm_ungrab (Window);
 void wm_changeGeomRelative (Client*, int, int, int, int);
 Client* wm_fetchClient (Window);
+void wm_changegeomclamp (Client* cl, int x, int y, int w, int h);
 
 #endif

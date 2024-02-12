@@ -247,6 +247,19 @@ decStack (Arg args UNUSED) {
     tl_nMasterIncDec (-1);
 }
 
+void
+cyclemon (Arg args UNUSED) {
+    Client* cl = wm_fetchClient (CURRENT_WINDOW);
+    if (cl) {
+        int nmonnum = (cl->monnum + 1) % NMON;
+        int nx = cl->x - monitors[cl->monnum].x + monitors[nmonnum].x;
+        int ny = cl->y - monitors[cl->monnum].y + monitors[nmonnum].y;
+        cl->monnum = nmonnum;
+        dbg_log ("[ INFO ] cycling monitor to %d\n", cl->monnum);
+        wm_changegeomclamp (cl, nx, ny, cl->w, cl->h);
+    }
+}
+
 const keyChord keyBinds[N_KEY_BINDS] = {
     { .modifier = Mod4Mask | ShiftMask  , .key = "e"                    , .cmd = exit_wm        , .args.vp = NULL },
     { .modifier = Mod4Mask              , .key = "Return"               , .cmd = spawn          , .args.str= "alacritty"},
@@ -281,7 +294,8 @@ const keyChord keyBinds[N_KEY_BINDS] = {
     { .modifier = Mod4Mask              , .key = "w"                    , .cmd = toggleTiling   , .args.vp = NULL },
     { .modifier = Mod4Mask              , .key = "e"                    , .cmd = toggleFloating , .args.vp = NULL },
     { .modifier = Mod4Mask              , .key = "i"                    , .cmd = incStack       , .args.vp = NULL },
-    { .modifier = Mod4Mask              , .key = "o"                    , .cmd = decStack       , .args.vp = NULL }
+    { .modifier = Mod4Mask              , .key = "o"                    , .cmd = decStack       , .args.vp = NULL },
+    { .modifier = Mod4Mask              , .key = "b"                    , .cmd = cyclemon       , .args.vp = NULL },
 };
 
 const mouseBind mouseBinds[N_MOUSE_BINDS] = {
@@ -292,6 +306,6 @@ const mouseBind mouseBinds[N_MOUSE_BINDS] = {
 
 
 const Monitor monitors[NMON] = {
-    { .x = 0    , .y = 0    , .w = 960  , .h = 540 },
-    { .x = 960  , .y = 0    , .w = 960  , .h = 540 }
+    { .x = 0    , .y = 0    , .w = 960  , .h = 1080 },
+    { .x = 960  , .y = 0    , .w = 960  , .h = 1080 }
 };

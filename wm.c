@@ -20,7 +20,7 @@ FILE* wm_log;
 Client* wm_focus;
 Client* activeClients;
 unsigned int workspacenum;
-Monitor const * currentmon;
+unsigned int currentmon;
 
 
 void start_wm (void);
@@ -47,8 +47,7 @@ start_wm (void)
 	winAttrib.event_mask = ROOT_MASK;
 	XSelectInput (dpy, defaultScreen.root, winAttrib.event_mask);
     workspacenum = 1;
-
-    currentmon = &monitors[1];
+    currentmon = 0;
 }
 
 /*
@@ -82,6 +81,22 @@ wm_changeGeomRelative (Client* cl, int relx, int rely, int relw, int relh)
 	cl->h += relh;
 
 	XMoveResizeWindow (dpy, cl->window, cl->x, cl->y, cl->w, cl->h);
+}
+
+void
+wm_changegeomclamp (Client* cl, int x, int y, int w, int h)
+{
+    if (!cl)
+        return;
+
+    dbg_log ("[ INFO ] clamp req, x: %d, y: %d, w: %d, h: %d\n", x, y, w, h);
+    cl->w = CLAMP((int)monitors[cl->monnum].w, w, 1);
+    cl->h = CLAMP((int)monitors[cl->monnum].h, h, 1);
+    cl->x = CLAMP((int)monitors[cl->monnum].w + (int)monitors[cl->monnum].x - cl->w, x, (int)monitors[cl->monnum].x);
+    cl->y = CLAMP((int)monitors[cl->monnum].h + (int)monitors[cl->monnum].y - cl->h, y, (int)monitors[cl->monnum].y);
+    XMoveResizeWindow (dpy, cl->window, cl->x, cl->y, cl->w, cl->h);
+
+    dbg_log ("[ INFO ] clamp res, x: %d, y: %d, w: %d, h: %d\n", cl->x, cl->y, cl->w, cl->h);
 }
 
 Client*
@@ -207,6 +222,7 @@ wm_manage (Window w) {
 	newClient->w = (int)t_w;
 	newClient->h = (int)t_h;
 	newClient->workspace = workspacenum;
+    newClient->monnum = currentmon;
 
 	// init new client
 	newClient->window = w;
@@ -288,6 +304,7 @@ wm_setFocus (Client* cl) {
 		XSetInputFocus (dpy, defaultScreen.root, RevertToPointerRoot, CurrentTime);
 		return;
 	}
+
 	dbg_log ("[ INFO ] wm_setfocus w = %d\n", cl->window);
 	wm_focus = cl;
 	XSetInputFocus (dpy, cl->window, RevertToPointerRoot, CurrentTime);
