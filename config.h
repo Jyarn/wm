@@ -5,12 +5,14 @@
 #include <stdbool.h>
 
 #include "event.h"
+#include "wm.h"
 
 #define N_KEY_BINDS 34
 #define N_MOUSE_BINDS 3
 #define NOMODIFIER 0
 #define BORDERWIDTH 3
 #define WORKSPACE_ALWAYSON 0
+#define NMON 2
 
 typedef union {
     unsigned int ui;
@@ -36,7 +38,8 @@ typedef struct {
 } mouseBind;
 
 
-extern const keyChord keyBinds[];
-extern const mouseBind mouseBinds[];
+extern const Monitor monitors[NMON];
+extern const keyChord keyBinds[N_KEY_BINDS];
+extern const mouseBind mouseBinds[N_MOUSE_BINDS];
 
 #endif

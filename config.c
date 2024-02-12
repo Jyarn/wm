@@ -289,3 +289,9 @@ const mouseBind mouseBinds[N_MOUSE_BINDS] = {
     { .modifier = Mod4Mask              , .buttons = Button1, .cmd = moveWindow     , .args.vp = NULL },
     { .modifier = Mod4Mask | ShiftMask  , .buttons = Button1, .cmd = resizeWindow   , .args.vp = NULL }
 };
+
+
+const Monitor monitors[NMON] = {
+    { .x = 0    , .y = 0    , .w = 960  , .h = 540 },
+    { .x = 960  , .y = 0    , .w = 960  , .h = 540 }
+};

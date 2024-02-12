@@ -19,41 +19,13 @@
 - [ ] compositing (xcomposite)
  - [ ] CLI
  - [x] --debug flag
- - [ ] --log flag
+ - [x] --log flag
+ - [ ] --monitor
 - [ ] config file / hot reloading??
 - [ ] EWMH compliance
 - [ ] ICCM compliance
 - [ ] key chording
 - [ ] replace xlib with xcb
-- [ ] Window manager
-  - [X] substructre redirection??
-  - [X] create event handler
-  - [X] window focus changing
-  - [X] override Redirect Flag
-  - [X] logging
-  - [X] create error handler
-  - [X] basic logging
-  - [X] arg processing
-  - [X] floating (tinywm-ish)
-    - [X] moving windows
-    - [X] resizing windows
-    - [X] hiding windows
-  - [ ] tiling
-    - [X] stack management
-    - [ ] override floating managment
-    - [ ] override floating management
-  - [ ] fullscreen
-  - [ ] multiple workspaces
-  - [ ] USE flags
-  - [ ] compositing (xcomposite)
-  - [ ] CLI
-  - [ ] multi-monitor support (randr)
-  - [ ] config file / hot reloading??
-  - [ ] EWMH compliance
-  - [ ] ICCM compliance
-  - [ ] key chording
-  - [ ] replace xlib with xcb
-  - [X] optimize memory use
 
 toolbar
 
@@ -64,9 +36,9 @@ clickable desktop icons (kind of like windows)
 fluid simulation wallpaper
 
 ISSUES:
-[x] easyeffects window not appearing
+[ ] easyeffects window not appearing
 notes: not running, or slowing down execution seems to make it appear => event handler issue
-       setup configure request
+       setup configure request (broken again)
 [x] alacritty crashing the window manager
 notes: no clue what happened but it got fixed. now whenever it crashes it doesn't give me any debug info :D
 [x] typing into (completley?) overlapped windows

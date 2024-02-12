@@ -20,30 +20,12 @@ FILE* wm_log;
 Client* wm_focus;
 Client* activeClients;
 unsigned int workspacenum;
+Monitor const * currentmon;
 
 
 void start_wm (void);
 void cleanup (void);
-void detectMonitors (void);
 void processcmdargs (int argc, char** argv);
-
-void
-detectMonitors (void)
-{
-	XRRScreenResources* srec = XRRGetScreenResourcesCurrent (dpy, defaultScreen.root);
-	for (int i = 0; i < srec->noutput; i++) {
-		XRROutputInfo* oi = XRRGetOutputInfo (dpy, srec, srec->outputs[i]);
-		if (oi->connection == RR_Connected) {
-			XRRCrtcInfo* cinfo = XRRGetCrtcInfo (dpy, srec, oi->crtc);
-			dbg_log ("[ INFO ] %s: (x:%d,y:%d)\n", oi->name, cinfo->width, cinfo->height);
-			XRRFreeCrtcInfo (cinfo);
-		}
-
-		XRRFreeOutputInfo (oi);
-	}
-
-	XRRFreeScreenResources (srec);
-}
 
 /*
  * Initialize default screen, and set the event mask for the event mask
@@ -64,10 +46,9 @@ start_wm (void)
 	XSetWindowAttributes winAttrib;
 	winAttrib.event_mask = ROOT_MASK;
 	XSelectInput (dpy, defaultScreen.root, winAttrib.event_mask);
-    workspacenum = 0;
     workspacenum = 1;
-    workspacenum = 0;
-	detectMonitors ();
+
+    currentmon = &monitors[1];
 }
 
 /*

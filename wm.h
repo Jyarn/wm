@@ -22,14 +22,16 @@ typedef enum {
 } ClientType;
 
 typedef struct {
-    int x;
-    int y;
+    unsigned int x;
+    unsigned int y;
+    unsigned int w;
+    unsigned int h;
 } Monitor;
 
 typedef struct {
     int screen;
     Window root;
-    Monitor* mons;
+    unsigned int nmon;
 } wm_screen;
 
 typedef struct s_client {
@@ -49,6 +51,7 @@ extern wm_screen defaultScreen;
 extern Client* wm_focus;
 extern Client* activeClients;
 extern unsigned int workspacenum;
+extern Monitor const * currentmon;
 
 bool wm_shouldbeManaged (Window);
 Client* wm_manage (Window);
