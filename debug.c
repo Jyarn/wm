@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdarg.h>
+#include <string.h>
 
 #include "debug.h"
 #include "util.h"
@@ -31,8 +32,7 @@ void dbg_init (char* file) {
     if (file != NULL) {
         logFile = fopen (file, "w");
         dbg_log ("[ INFO ] begin log\n");
-    }
-    else
+    } else
         logFile = NULL;
 
     handlerDefault = XSetErrorHandler (handlerUser);
@@ -46,14 +46,14 @@ void dbg_close (void) {
 int handlerUser (Display* dsp, XErrorEvent* event) {
     char bff[512];
     XGetErrorText (dsp, event->error_code, bff, 512);
-    fprintf (logFile, "[ ERROR ] xerror: %s\n", bff);
+    dbg_log ("[ ERROR ] xerror: %s\n", bff);
     return handlerDefault (dsp, event);
 }
 
 int handlerOff (Display* dsp, XErrorEvent* event) {
     char bff[512];
     XGetErrorText (dsp, event->error_code, bff, 512);
-    fprintf (logFile, "[ WARNING ] xerror: %s\n", bff);
+    dbg_log ("[ WARNING ] xerror: %s\n", bff);
     return 0;
 }
 

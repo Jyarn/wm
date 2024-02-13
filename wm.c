@@ -214,19 +214,19 @@ wm_manage (Window w) {
 	activeClients = newClient;
 	newClient->minimized = false;
 
-	// fetch geometry of window
-	Window root;
-	unsigned int borderWidth, depth, t_w, t_h;
-
-	XGetGeometry (dpy, w, &root, &newClient->x, &newClient->y, &t_w, &t_h, &borderWidth, &depth);
-	newClient->w = (int)t_w;
-	newClient->h = (int)t_h;
-	newClient->workspace = workspacenum;
-    newClient->monnum = currentmon;
-
 	// init new client
 	newClient->window = w;
 	newClient->type = floating;
+
+	// fetch geometry of window
+	Window root;
+	unsigned int borderWidth, depth, t_w, t_h;
+    int t_x, t_y;
+
+	newClient->workspace = workspacenum;
+    newClient->monnum = currentmon;
+	XGetGeometry (dpy, w, &root, &t_x, &t_y, &t_w, &t_h, &borderWidth, &depth);
+    wm_changegeomclamp (newClient, t_x, t_y, t_w, t_h);
 
 	// set event mask
 	XSelectInput (dpy, w, WIN_MASK);
@@ -342,15 +342,16 @@ processcmdargs (int argc, char** argv)
             int a = 1;
             while (a) {}
         } else if (!strncmp (argv[i], "--log", 6)) {
-            if (i + 1 >= argc || argv[i+1][0] == '-')
+            if (i + 1 >= argc)
                 continue;
 
             struct stat tempstat;
-            if (stat (argv[i+1], &tempstat) >= 0  && S_ISREG(tempstat.st_mode))
+            if (stat (argv[i+1], &tempstat) >= 0)
                 logfile = argv[i+1];
             else {
                 fprintf (stderr, "[ ERROR ]: invalid log file\n");
                 exit (1);
+
             }
         }
     }

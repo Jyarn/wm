@@ -26,6 +26,9 @@
 - [ ] ICCM compliance
 - [ ] key chording
 - [ ] replace xlib with xcb
+- [ ] quality of life features
+ - [ ] snapping windows
+ - [ ] seperate tabbing for hidden and non-hidden windows
 
 toolbar
 
@@ -39,6 +42,11 @@ ISSUES:
 [ ] easyeffects window not appearing
 notes: not running, or slowing down execution seems to make it appear => event handler issue
        setup configure request (broken again)
+[ ] clicking buttons in firefox, and steam don't work
+[ ] unable to select text in firefox
+[ ] unfocusing window makes window dissapear
+[ ] go back shortcut doesn't work in firefox
+[ ] popup windows aren't able to recieve commands
 [x] alacritty crashing the window manager
 notes: no clue what happened but it got fixed. now whenever it crashes it doesn't give me any debug info :D
 [x] typing into (completley?) overlapped windows
