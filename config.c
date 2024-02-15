@@ -83,6 +83,9 @@ moveWindow (Arg args UNUSED) {
 
     XMotionEvent m;
     handler h;
+    bool snapx = false;
+    bool snapy = false ;
+    Monitor mon = CURRENTMON(cl);
 
     int prevX = evt_currentEvent.xbutton.x_root;
     int prevY = evt_currentEvent.xbutton.y_root;
@@ -96,12 +99,29 @@ moveWindow (Arg args UNUSED) {
                 break;
             case MotionNotify:
                 m = evt_currentEvent.xmotion;
-                wm_changeGeomRelative (cl,
-                                       m.x_root - prevX,
-                                       m.y_root - prevY,
-                                       0, 0);
-                prevX = m.x_root;
-                prevY = m.y_root;
+                wm_changeGeomRelative (cl, m.x_root - prevX, m.y_root - prevY, 0, 0);
+                if (snapx && (cl->x - mon.x) <= SNAPDIST) {
+                    XWarpPointer (dpy, defaultScreen.root, None, 0, 0, 0, 0, mon.x - cl->x, 0);
+                    snapx = false;
+                } else if (snapx && (mon.x + mon.w - cl->x - cl->w) <= SNAPDIST) {
+                    XWarpPointer (dpy, defaultScreen.root, None, 0, 0, 0, 0, mon.x + mon.w - cl->x - cl->w, 0);
+                    snapx = false;
+                } else {
+                    prevX = m.x_root;
+                    snapx = SNAPDIST < (cl->x - mon.x) && SNAPDIST < (mon.x + mon.w - cl->x - cl->w);
+                }
+
+                if (snapy && (cl->y - mon.y) <= SNAPDIST) {
+                    XWarpPointer (dpy, defaultScreen.root, None, 0, 0, 0, 0, 0, mon.y - cl->y);
+                    snapy = false;
+                } else if (snapy && (mon.y + mon.h - cl->y - cl->h) <= SNAPDIST) {
+                    XWarpPointer (dpy, defaultScreen.root, None, 0, 0, 0, 0, 0, mon.y + mon.h - cl->y - cl->h);
+                    snapy = false;
+                } else {
+                    prevY = m.y_root;
+                    snapy = SNAPDIST < (cl->y - mon.y) && SNAPDIST < (mon.y + mon.h - cl->y - cl->h);
+                }
+
                 break;
             case ButtonRelease:
                 goto EXIT;
