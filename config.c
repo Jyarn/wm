@@ -157,7 +157,6 @@ resizeWindow (Arg args UNUSED) {
 
                 prevX = mov.x_root;
                 prevY = mov.y_root;
-                usleep (1000); // sleep for a bit to avoid calling XMoveResize so much
                 break;
             case ButtonRelease:
                 goto EXIT;
@@ -185,8 +184,8 @@ minimize (Arg args UNUSED) {
 }
 
 void
-tabwindows (Arg args UNUSED) {
-    wm_focusNext (true);
+tabwindows (Arg args) {
+    wm_focusNext (args.b);
 }
 
 void
@@ -208,7 +207,7 @@ switchworkspace (Arg args)
     }
 
     workspacenum = args.ui;
-    if (wm_focus->workspace != WORKSPACE_ALWAYSON)
+    if (wm_focus && wm_focus->workspace != WORKSPACE_ALWAYSON)
         wm_focusNext (false);
 }
 
@@ -257,6 +256,7 @@ cyclemon (Arg args UNUSED) {
         cl->monnum = nmonnum;
         dbg_log ("[ INFO ] cycling monitor to %d\n", cl->monnum);
         wm_changegeomclamp (cl, nx, ny, cl->w, cl->h);
+        currentmon = cl->monnum;
     }
 }
 
@@ -270,7 +270,8 @@ const keyChord keyBinds[N_KEY_BINDS] = {
     { .modifier = Mod4Mask | ShiftMask  , .key = "q"                    , .cmd = killWindow     , .args.vp = NULL},
     { .modifier = Mod4Mask | ShiftMask  , .key = "Return"               , .cmd = spawn          , .args.str= "alacritty -e bash -c CAD.sh"},
     { .modifier = Mod4Mask              , .key = "q"                    , .cmd = minimize       , .args.vp = NULL},
-    { .modifier = Mod4Mask              , .key = "Tab"                  , .cmd = tabwindows     , .args.vp = NULL},
+    { .modifier = Mod4Mask              , .key = "Tab"                  , .cmd = tabwindows     , .args.b  = false },
+    { .modifier = Mod4Mask | ShiftMask  , .key = "Tab"                  , .cmd = tabwindows     , .args.b  = true },
     { .modifier = Mod4Mask              , .key = "0"                    , .cmd = switchworkspace, .args.ui = 0},
     { .modifier = Mod4Mask              , .key = "1"                    , .cmd = switchworkspace, .args.ui = 1 },
     { .modifier = Mod4Mask              , .key = "2"                    , .cmd = switchworkspace, .args.ui = 2 },

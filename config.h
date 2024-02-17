@@ -7,7 +7,7 @@
 #include "event.h"
 #include "wm.h"
 
-#define N_KEY_BINDS 35
+#define N_KEY_BINDS 36
 #define N_MOUSE_BINDS 3
 #define NOMODIFIER 0
 #define BORDERWIDTH 3
@@ -19,6 +19,7 @@ typedef union {
     void* vp;
     char c;
     char* str;
+    bool b;
 } Arg;
 
 typedef void (*cmd)(Arg);

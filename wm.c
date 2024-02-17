@@ -219,14 +219,10 @@ wm_manage (Window w) {
 	newClient->type = floating;
 
 	// fetch geometry of window
-	Window root;
-	unsigned int borderWidth, depth, t_w, t_h;
-    int t_x, t_y;
-
 	newClient->workspace = workspacenum;
     newClient->monnum = currentmon;
-	XGetGeometry (dpy, w, &root, &t_x, &t_y, &t_w, &t_h, &borderWidth, &depth);
-    wm_changegeomclamp (newClient, t_x, t_y, t_w, t_h);
+    wm_changegeomclamp (newClient, monitors[currentmon].x, monitors[currentmon].y,
+                        monitors[currentmon].w >> 1, monitors[currentmon].h >> 1);
 
 	// set event mask
 	XSelectInput (dpy, w, WIN_MASK);
@@ -282,7 +278,7 @@ wm_focusNext (bool focusMinimized) {
 		do {
 			if (!temp)
 				temp = activeClients;
-			else if ((workspacenum == temp->workspace || temp->workspace == WORKSPACE_ALWAYSON) && (focusMinimized || !temp->minimized)) {
+			else if ((workspacenum == temp->workspace || temp->workspace == WORKSPACE_ALWAYSON) && (focusMinimized ^ !temp->minimized)) {
                 XMoveWindow (dpy, temp->window, temp->x, temp->y);
                 temp->minimized = false;
 				wm_setFocus (temp);
@@ -307,6 +303,7 @@ wm_setFocus (Client* cl) {
 
 	dbg_log ("[ INFO ] wm_setfocus w = %d\n", cl->window);
 	wm_focus = cl;
+    currentmon = cl->monnum;
 	XSetInputFocus (dpy, cl->window, RevertToPointerRoot, CurrentTime);
     XRaiseWindow (dpy, cl->window);
 }
@@ -315,7 +312,7 @@ void
 wm_show (Client* cl) {
     assert (cl != NULL);
     if (!cl->minimized)
-	return;
+	    return;
 
     XMoveWindow (dpy, cl->window, cl->x, cl->y);
 	cl->minimized = false;
@@ -328,7 +325,7 @@ wm_minimize (Client* cl) {
     assert (wm_fetchClient (cl->window));
 
     dbg_log ("[ INFO] minimize\n");
-    XMoveWindow (dpy, cl->window, -2*cl->w, -2*cl->h);
+    XMoveWindow (dpy, cl->window, -3840, -1080);
     cl->minimized = true;
 }
 
