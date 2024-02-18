@@ -78,7 +78,7 @@ void
 moveWindow (Arg args UNUSED) {
     Client* cl = wm_fetchClient (CURRENT_WINDOW);
 
-    if (!cl)
+    if (!cl || monitors[cl->monnum].fullscreen == cl)
         return;
 
     XMotionEvent m;
@@ -158,7 +158,7 @@ void
 resizeWindow (Arg args UNUSED) {
     XButtonPressedEvent ev = evt_currentEvent.xbutton;
     Client* cl = wm_fetchClient (ev.window);
-    if (!cl)
+    if (!cl || monitors[cl->monnum].fullscreen == cl)
         return;
 
     const bool ulx = ev.x*2 < cl->w;
@@ -237,8 +237,12 @@ switchworkspace (Arg args)
     dbg_log ("[ INFO ] switching to workspace %d\n", args.ui);
 
     while (cur) {
-        if (cur->workspace == args.ui && !cur->minimized)
-            XMoveWindow (dpy, cur->window, cur->x, cur->y);
+        if (cur->workspace == args.ui && !cur->minimized) {
+            if (monitors[cur->monnum].fullscreen == cur)
+                XMoveWindow (dpy, cur->window, monitors[cur->monnum].x, monitors[cur->monnum].y);
+            else
+                XMoveWindow (dpy, cur->window, cur->x, cur->y);
+        }
         else if (!cur->minimized && cur->workspace == workspacenum && cur->workspace != WORKSPACE_ALWAYSON) {
             XMoveWindow (dpy, cur->window, -3840, -2160); // move to the shadow zone
         }
@@ -246,7 +250,7 @@ switchworkspace (Arg args)
     }
 
     workspacenum = args.ui;
-    if (wm_focus && wm_focus->workspace != WORKSPACE_ALWAYSON)
+    if (!wm_focus || wm_focus->workspace != WORKSPACE_ALWAYSON)
         wm_focusNext (false);
 }
 
@@ -295,7 +299,25 @@ cyclemon (Arg args UNUSED) {
         cl->monnum = nmonnum;
         dbg_log ("[ INFO ] cycling monitor to %d\n", cl->monnum);
         wm_changegeomclamp (cl, nx, ny, cl->w, cl->h);
+
+        monitors[cl->monnum].fullscreen = NULL;
+        monitors[nmonnum].fullscreen = cl;
         currentmon = cl->monnum;
+    }
+}
+
+void
+togglefulscreen (Arg args UNUSED) {
+    Client* cl = wm_fetchClient (CURRENT_WINDOW);
+    if (cl) {
+        Monitor* mon = &monitors[cl->monnum];
+        if (mon->fullscreen == NULL) {
+            XMoveResizeWindow (dpy, cl->window, 0, 0, mon->w, mon->h);
+            mon->fullscreen = cl;
+        } else if (mon->fullscreen == cl){
+            XMoveResizeWindow (dpy, cl->window, cl->x, cl->y, cl->w, cl->h);
+            mon->fullscreen = NULL;
+        }
     }
 }
 
@@ -307,7 +329,7 @@ const keyChord keyBinds[N_KEY_BINDS] = {
     { .modifier = AnyModifier           , .key = "XF86AudioLowerVolume" , .cmd = spawn          , .args.str= "pactl set-sink-volume @DEFAULT_SINK@ -5%"},
     { .modifier = AnyModifier           , .key = "XF86AudioMute"        , .cmd = spawn          , .args.str= "pactl set-source-mute @DEFAULT_SOURCE@ toggle"},
     { .modifier = Mod4Mask | ShiftMask  , .key = "q"                    , .cmd = killWindow     , .args.vp = NULL},
-    { .modifier = Mod4Mask | ShiftMask  , .key = "Return"               , .cmd = spawn          , .args.str= "alacritty -e bash -c CAD.sh"},
+    { .modifier = Mod4Mask | ShiftMask  , .key = "Return"               , .cmd = spawn          , .args.str= "alacritty -e bash -c ~/Scripts/CAD.sh"},
     { .modifier = Mod4Mask              , .key = "q"                    , .cmd = minimize       , .args.vp = NULL},
     { .modifier = Mod4Mask              , .key = "Tab"                  , .cmd = tabwindows     , .args.b  = false },
     { .modifier = Mod4Mask | ShiftMask  , .key = "Tab"                  , .cmd = tabwindows     , .args.b  = true },
@@ -335,7 +357,8 @@ const keyChord keyBinds[N_KEY_BINDS] = {
     { .modifier = Mod4Mask              , .key = "e"                    , .cmd = toggleFloating , .args.vp = NULL },
     { .modifier = Mod4Mask              , .key = "i"                    , .cmd = incStack       , .args.vp = NULL },
     { .modifier = Mod4Mask              , .key = "o"                    , .cmd = decStack       , .args.vp = NULL },
-    { .modifier = Mod4Mask              , .key = "b"                    , .cmd = cyclemon       , .args.vp = NULL },
+    { .modifier = Mod4Mask              , .key = "comma"                , .cmd = cyclemon       , .args.vp = NULL },
+    { .modifier = Mod4Mask              , .key = "f"                    , .cmd = togglefulscreen, .args.vp = NULL },
 };
 
 const mouseBind mouseBinds[N_MOUSE_BINDS] = {
@@ -345,7 +368,6 @@ const mouseBind mouseBinds[N_MOUSE_BINDS] = {
 };
 
 
-const Monitor monitors[NMON] = {
-    { .x = 0    , .y = 0    , .w = 960  , .h = 1080 },
-    { .x = 960  , .y = 0    , .w = 960  , .h = 1080 }
+Monitor monitors[NMON] = {
+    { .x = 0  , .y = 0    , .w = 1920, .h = 1080 }
 };

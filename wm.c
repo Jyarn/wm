@@ -143,7 +143,7 @@ wm_grabMouse (Window win) {
 			win,
 			False,
 			MOUSE_MASK,
-			GrabModeAsync, GrabModeAsync,
+			GrabModeSync, GrabModeAsync,
 			None, None
 		);
 }
@@ -279,7 +279,10 @@ wm_focusNext (bool focusMinimized) {
 			if (!temp)
 				temp = activeClients;
 			else if ((workspacenum == temp->workspace || temp->workspace == WORKSPACE_ALWAYSON) && (focusMinimized ^ !temp->minimized)) {
-                XMoveWindow (dpy, temp->window, temp->x, temp->y);
+                if (monitors[temp->monnum].fullscreen == temp)
+                    XMoveWindow (dpy, temp->window, monitors[temp->monnum].x, monitors[temp->monnum].y);
+                else
+                    XMoveWindow (dpy, temp->window, temp->x, temp->y);
                 temp->minimized = false;
 				wm_setFocus (temp);
 				return;
@@ -314,7 +317,12 @@ wm_show (Client* cl) {
     if (!cl->minimized)
 	    return;
 
-    XMoveWindow (dpy, cl->window, cl->x, cl->y);
+    if (monitors[cl->monnum].fullscreen == cl) {
+        XMoveWindow (dpy, cl->window, monitors[cl->monnum].x, monitors[cl->monnum].y);
+    } else {
+        XMoveWindow (dpy, cl->window, cl->x, cl->y);
+    }
+
 	cl->minimized = false;
 }
 

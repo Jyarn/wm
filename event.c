@@ -99,7 +99,10 @@ onButtonPress (void) {
 	XButtonPressedEvent* ev = &evt_currentEvent.xbutton;
 	for (int i = 0; i < N_MOUSE_BINDS; i++)
 		if (ev->button == mouseBinds[i].buttons && ev->state == mouseBinds[i].modifier) {
+            dbg_log ("[ INFO ] button press\n");
 			mouseBinds[i].cmd (mouseBinds[i].args);
+            XAllowEvents (dpy, ReplayPointer, CurrentTime);
+            XSync (dpy, False);
 			return;
 		}
 }

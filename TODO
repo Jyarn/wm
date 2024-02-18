@@ -12,8 +12,8 @@
  - [x] resizing windows
  - [x] hiding windows
 - [ ] tiling
-- [ ] multi-monitor support (randr)
-- [ ] fullscreen
+- [x] multi-monitor support (randr)
+- [x] fullscreen
 - [x] multiple workspaces
 - [ ] reparenting
 - [ ] compositing (xcomposite)
@@ -27,8 +27,8 @@
 - [ ] key chording
 - [ ] replace xlib with xcb
 - [ ] quality of life features
- - [ ] snapping windows
- - [ ] seperate tabbing for hidden and non-hidden windows
+ - [x] snapping windows
+ - [x] seperate tabbing for hidden and non-hidden windows
 
 toolbar
 
@@ -39,11 +39,11 @@ clickable desktop icons (kind of like windows)
 fluid simulation wallpaper
 
 ISSUES:
-[ ] easyeffects window not appearing
+[x] easyeffects window not appearing
 notes: not running, or slowing down execution seems to make it appear => event handler issue
        setup configure request (broken again)
-[ ] clicking buttons in firefox, and steam don't work
-[ ] unable to select text in firefox
+[x] clicking buttons in firefox, and steam don't work
+[x] unable to select text in firefox
 [ ] unfocusing window makes window dissapear
 [ ] go back shortcut doesn't work in firefox
 [ ] popup windows aren't able to recieve commands

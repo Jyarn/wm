@@ -22,13 +22,6 @@ typedef enum {
 } ClientType;
 
 typedef struct {
-    int x;
-    int y;
-    int w;
-    int h;
-} Monitor;
-
-typedef struct {
     int screen;
     Window root;
     unsigned int nmon;
@@ -46,6 +39,14 @@ typedef struct s_client {
     unsigned int monnum;
     unsigned int workspace;
 } Client;
+
+typedef struct {
+    int x;
+    int y;
+    int w;
+    int h;
+    Client* fullscreen;
+} Monitor;
 
 extern Display* dpy;
 extern wm_screen defaultScreen;

@@ -7,12 +7,12 @@
 #include "event.h"
 #include "wm.h"
 
-#define N_KEY_BINDS 36
+#define N_KEY_BINDS 37
 #define N_MOUSE_BINDS 3
 #define NOMODIFIER 0
 #define BORDERWIDTH 3
 #define WORKSPACE_ALWAYSON 0
-#define NMON 2
+#define NMON 1
 #define SNAPDIST 30
 #define CURRENTMON(cl) (monitors[cl->monnum])
 
@@ -41,7 +41,7 @@ typedef struct {
 } mouseBind;
 
 
-extern const Monitor monitors[NMON];
+extern Monitor monitors[NMON];
 extern const keyChord keyBinds[N_KEY_BINDS];
 extern const mouseBind mouseBinds[N_MOUSE_BINDS];
 
