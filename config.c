@@ -100,6 +100,25 @@ moveWindow (Arg args UNUSED) {
             case MotionNotify:
                 m = evt_currentEvent.xmotion;
                 wm_changeGeomRelative (cl, m.x_root - prevX, m.y_root - prevY, 0, 0);
+
+                if ((mon.x > cl->x + cl->w || cl->x > mon.x + mon.w) // when you interval trichotomy
+                 || (mon.y > cl->y + cl->h || cl->y > mon.y + mon.h))
+                {
+                    dbg_log ("[ INFO ] window out of monitor, current = %d\n", currentmon);
+                    for (int i = 0; i < NMON; i++) {
+                        Monitor t = monitors[i];
+                        if ((t.x <= cl->x + cl->w && cl->x <= t.x + t.w)
+                         && (t.y <= cl->y + cl->h && cl->y <= t.y + t.h))
+                        {
+                            mon = t;
+                            cl->monnum = i;
+                            currentmon = i;
+                        }
+                    }
+
+                    dbg_log ("[ INFO] monitor set to %d\n", currentmon);
+                }
+
                 if (snapx && (cl->x - mon.x) <= SNAPDIST) {
                     XWarpPointer (dpy, defaultScreen.root, None, 0, 0, 0, 0, mon.x - cl->x, 0);
                     snapx = false;
