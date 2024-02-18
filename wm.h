@@ -35,6 +35,7 @@ typedef struct s_client {
     struct s_client* next;
     ClientType type;
     Window window;
+    bool fullscreen;
     bool minimized;
     unsigned int monnum;
     unsigned int workspace;
@@ -45,7 +46,6 @@ typedef struct {
     int y;
     int w;
     int h;
-    Client* fullscreen;
 } Monitor;
 
 extern Display* dpy;

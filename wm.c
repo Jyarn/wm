@@ -279,7 +279,7 @@ wm_focusNext (bool focusMinimized) {
 			if (!temp)
 				temp = activeClients;
 			else if ((workspacenum == temp->workspace || temp->workspace == WORKSPACE_ALWAYSON) && (focusMinimized ^ !temp->minimized)) {
-                if (monitors[temp->monnum].fullscreen == temp)
+                if (temp->fullscreen)
                     XMoveWindow (dpy, temp->window, monitors[temp->monnum].x, monitors[temp->monnum].y);
                 else
                     XMoveWindow (dpy, temp->window, temp->x, temp->y);
@@ -317,7 +317,7 @@ wm_show (Client* cl) {
     if (!cl->minimized)
 	    return;
 
-    if (monitors[cl->monnum].fullscreen == cl) {
+    if (cl->fullscreen) {
         XMoveWindow (dpy, cl->window, monitors[cl->monnum].x, monitors[cl->monnum].y);
     } else {
         XMoveWindow (dpy, cl->window, cl->x, cl->y);

@@ -10,7 +10,7 @@
 #define N_KEY_BINDS 37
 #define N_MOUSE_BINDS 3
 #define NOMODIFIER 0
-#define BORDERWIDTH 3
+#define BORDERWIDTH 5
 #define WORKSPACE_ALWAYSON 0
 #define NMON 1
 #define SNAPDIST 30

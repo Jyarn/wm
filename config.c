@@ -78,7 +78,7 @@ void
 moveWindow (Arg args UNUSED) {
     Client* cl = wm_fetchClient (CURRENT_WINDOW);
 
-    if (!cl || monitors[cl->monnum].fullscreen == cl)
+    if (!cl || cl->fullscreen)
         return;
 
     XMotionEvent m;
@@ -158,7 +158,7 @@ void
 resizeWindow (Arg args UNUSED) {
     XButtonPressedEvent ev = evt_currentEvent.xbutton;
     Client* cl = wm_fetchClient (ev.window);
-    if (!cl || monitors[cl->monnum].fullscreen == cl)
+    if (!cl || cl->fullscreen)
         return;
 
     const bool ulx = ev.x*2 < cl->w;
@@ -238,7 +238,7 @@ switchworkspace (Arg args)
 
     while (cur) {
         if (cur->workspace == args.ui && !cur->minimized) {
-            if (monitors[cur->monnum].fullscreen == cur)
+            if (cur->fullscreen)
                 XMoveWindow (dpy, cur->window, monitors[cur->monnum].x, monitors[cur->monnum].y);
             else
                 XMoveWindow (dpy, cur->window, cur->x, cur->y);
@@ -300,8 +300,6 @@ cyclemon (Arg args UNUSED) {
         dbg_log ("[ INFO ] cycling monitor to %d\n", cl->monnum);
         wm_changegeomclamp (cl, nx, ny, cl->w, cl->h);
 
-        monitors[cl->monnum].fullscreen = NULL;
-        monitors[nmonnum].fullscreen = cl;
         currentmon = cl->monnum;
     }
 }
@@ -311,12 +309,12 @@ togglefulscreen (Arg args UNUSED) {
     Client* cl = wm_fetchClient (CURRENT_WINDOW);
     if (cl) {
         Monitor* mon = &monitors[cl->monnum];
-        if (mon->fullscreen == NULL) {
-            XMoveResizeWindow (dpy, cl->window, 0, 0, mon->w, mon->h);
-            mon->fullscreen = cl;
-        } else if (mon->fullscreen == cl){
+        if (!cl->fullscreen) {
+            XMoveResizeWindow (dpy, cl->window, 0, 0, mon->w - BORDERWIDTH*2, mon->h - BORDERWIDTH*2);
+            cl->fullscreen = true;
+        } else if (cl->fullscreen){
             XMoveResizeWindow (dpy, cl->window, cl->x, cl->y, cl->w, cl->h);
-            mon->fullscreen = NULL;
+            cl->fullscreen = false;
         }
     }
 }
