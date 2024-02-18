@@ -13,6 +13,8 @@
 #define BORDERWIDTH 3
 #define WORKSPACE_ALWAYSON 0
 #define NMON 2
+#define SNAPDIST 30
+#define CURRENTMON(cl) (monitors[cl->monnum])
 
 typedef union {
     unsigned int ui;
