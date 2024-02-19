@@ -245,6 +245,8 @@ wm_unmanage (Window w) {
 				activeClients = cur->next;
 
 			dbg_log ("[ INFO ] wm_unmanage\n");
+            if (cur == wm_focus)
+                wm_focusNext (false);
 			free (cur);
 			return;
 		}
@@ -259,7 +261,6 @@ wm_killClient (Window w) {
 	if (w == (Window)defaultScreen.root)
 		return;
 
-	wm_focusNext (false);
 	wm_unmanage (w);
 	XSetCloseDownMode (dpy, DestroyAll);
 	XKillClient (dpy, w);
