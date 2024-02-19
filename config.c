@@ -81,8 +81,6 @@ moveWindow (Arg args UNUSED) {
 
     XMotionEvent m;
     handler h;
-    bool snapx = false;
-    bool snapy = false ;
     Monitor mon = CURRENTMON(cl);
 
     int prevX = evt_currentEvent.xbutton.x_root;
@@ -117,28 +115,8 @@ moveWindow (Arg args UNUSED) {
                     dbg_log ("[ INFO] monitor set to %d\n", currentmon);
                 }
 
-                if (snapx && (cl->x - mon.x) <= SNAPDIST) {
-                    XWarpPointer (dpy, defaultScreen.root, None, 0, 0, 0, 0, mon.x - cl->x, 0);
-                    snapx = false;
-                } else if (snapx && (mon.x + mon.w - cl->x - cl->w) <= SNAPDIST) {
-                    XWarpPointer (dpy, defaultScreen.root, None, 0, 0, 0, 0, mon.x + mon.w - cl->x - cl->w, 0);
-                    snapx = false;
-                } else {
-                    prevX = m.x_root;
-                    snapx = SNAPDIST < (cl->x - mon.x) && SNAPDIST < (mon.x + mon.w - cl->x - cl->w);
-                }
-
-                if (snapy && (cl->y - mon.y) <= SNAPDIST) {
-                    XWarpPointer (dpy, defaultScreen.root, None, 0, 0, 0, 0, 0, mon.y - cl->y);
-                    snapy = false;
-                } else if (snapy && (mon.y + mon.h - cl->y - cl->h) <= SNAPDIST) {
-                    XWarpPointer (dpy, defaultScreen.root, None, 0, 0, 0, 0, 0, mon.y + mon.h - cl->y - cl->h);
-                    snapy = false;
-                } else {
-                    prevY = m.y_root;
-                    snapy = SNAPDIST < (cl->y - mon.y) && SNAPDIST < (mon.y + mon.h - cl->y - cl->h);
-                }
-
+                prevX = m.x_root;
+                prevY = m.y_root;
                 break;
             case ButtonRelease:
                 goto EXIT;
@@ -147,7 +125,6 @@ moveWindow (Arg args UNUSED) {
                     h ();
         }
     }
-
 EXIT:
     WM_UNGRABPOINTER ();
 }
@@ -307,8 +284,8 @@ const keyChord keyBinds[N_KEY_BINDS] = {
     { .modifier = Mod4Mask | ShiftMask  , .key = "q"                    , .cmd = killWindow     , .args.vp = NULL},
     { .modifier = Mod4Mask | ShiftMask  , .key = "Return"               , .cmd = spawn          , .args.str= "alacritty -e bash -c ~/Scripts/CAD.sh"},
     { .modifier = Mod4Mask              , .key = "q"                    , .cmd = minimize       , .args.vp = NULL},
-    { .modifier = Mod4Mask              , .key = "Tab"                  , .cmd = tabwindows     , .args.b  = false },
-    { .modifier = Mod4Mask | ShiftMask  , .key = "Tab"                  , .cmd = tabwindows     , .args.b  = true },
+    { .modifier = Mod4Mask              , .key = "j"                    , .cmd = tabwindows     , .args.b  = false },
+    { .modifier = Mod4Mask | ShiftMask  , .key = "j"                    , .cmd = tabwindows     , .args.b  = true },
     { .modifier = Mod4Mask              , .key = "0"                    , .cmd = switchworkspace, .args.ui = 0},
     { .modifier = Mod4Mask              , .key = "1"                    , .cmd = switchworkspace, .args.ui = 1 },
     { .modifier = Mod4Mask              , .key = "2"                    , .cmd = switchworkspace, .args.ui = 2 },
