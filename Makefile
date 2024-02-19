@@ -2,7 +2,7 @@ CC=gcc
 CFLAGS=-g -Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes
 EXE=wm
 
-OBJ=wm.o event.o config.o debug.o tl.o
+OBJ=wm.o event.o config.o debug.o
 INC=-I/usr/include
 LIB=-lX11 -lXrandr
 

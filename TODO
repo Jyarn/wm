@@ -21,7 +21,6 @@
  - [x] --debug flag
  - [x] --log flag
  - [ ] --monitor
-- [ ] config file / hot reloading??
 - [ ] EWMH compliance
 - [ ] ICCM compliance
 - [ ] key chording

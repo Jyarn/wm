@@ -7,7 +7,7 @@
 #include "event.h"
 #include "wm.h"
 
-#define N_KEY_BINDS 37
+#define N_KEY_BINDS 33
 #define N_MOUSE_BINDS 3
 #define NOMODIFIER 0
 #define BORDERWIDTH 5

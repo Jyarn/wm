@@ -12,7 +12,6 @@
 #include "config.h"
 #include "util.h"
 #include "debug.h"
-#include "tl.h"
 
 Display* dpy;
 wm_screen defaultScreen;
@@ -246,7 +245,6 @@ wm_unmanage (Window w) {
 				activeClients = cur->next;
 
 			dbg_log ("[ INFO ] wm_unmanage\n");
-			tl_remove (cur);
 			free (cur);
 			return;
 		}
