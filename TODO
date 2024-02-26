@@ -11,10 +11,10 @@
  - [x] moving windows
  - [x] resizing windows
  - [x] hiding windows
-- [ ] tiling
 - [x] multi-monitor support (randr)
 - [x] fullscreen
 - [x] multiple workspaces
+- [ ] borders
 - [ ] reparenting
 - [ ] compositing (xcomposite)
  - [ ] CLI
@@ -38,13 +38,25 @@ clickable desktop icons (kind of like windows)
 fluid simulation wallpaper
 
 ISSUES:
+[ ] input freezes
+ How to reproduce:
+  1. Open Steam
+  2. Open friends
+  3. Switch to different workspace
+  4. Open terminal
+  1. Create unmanaged window
+  2. Switch workspace
+  3. Open something
+  4. Try to close it
+  1. Open Firefox
+  2. ...
 [x] easyeffects window not appearing
 notes: not running, or slowing down execution seems to make it appear => event handler issue
        setup configure request (broken again)
 [x] clicking buttons in firefox, and steam don't work
 [x] unable to select text in firefox
 [ ] unfocusing window makes window dissapear
-[ ] go back shortcut doesn't work in firefox
+[x] go back shortcut doesn't work in firefox
 [ ] popup windows aren't able to recieve commands
 [x] alacritty crashing the window manager
 notes: no clue what happened but it got fixed. now whenever it crashes it doesn't give me any debug info :D

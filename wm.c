@@ -2,10 +2,11 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <errno.h>
 #include <string.h>
 #include <X11/extensions/Xrandr.h>
 #include <sys/stat.h>
+#include <signal.h>
+#include <unistd.h>
 
 #include "wm.h"
 #include "event.h"
@@ -20,7 +21,6 @@ Client* wm_focus;
 Client* activeClients;
 unsigned int workspacenum;
 unsigned int currentmon;
-
 
 void start_wm (void);
 void cleanup (void);
@@ -278,9 +278,10 @@ wm_focusNext (bool focusMinimized) {
 			if (!temp)
 				temp = activeClients;
 			else if ((workspacenum == temp->workspace || temp->workspace == WORKSPACE_ALWAYSON) && (focusMinimized ^ !temp->minimized)) {
-                if (temp->fullscreen)
-                    XMoveWindow (dpy, temp->window, monitors[temp->monnum].x, monitors[temp->monnum].y);
-                else
+                if (temp->fullscreen){
+                    Monitor mon = monitors[temp->monnum];
+                    XMoveWindow (dpy, temp->window, mon.x -BORDERWIDTH + FULLSCREENGAP, mon.y -BORDERWIDTH + FULLSCREENGAP);
+                } else
                     XMoveWindow (dpy, temp->window, temp->x, temp->y);
                 temp->minimized = false;
 				wm_setFocus (temp);
@@ -317,7 +318,8 @@ wm_show (Client* cl) {
 	    return;
 
     if (cl->fullscreen) {
-        XMoveWindow (dpy, cl->window, monitors[cl->monnum].x, monitors[cl->monnum].y);
+        Monitor mon = monitors[cl->monnum];
+        XMoveWindow (dpy, cl->window, mon.x -BORDERWIDTH + FULLSCREENGAP, mon.y -BORDERWIDTH + FULLSCREENGAP);
     } else {
         XMoveWindow (dpy, cl->window, cl->x, cl->y);
     }
@@ -374,6 +376,7 @@ main (int argc, char** argv) {
 	evt_eventHandler ();
 	cleanup ();
 	dbg_log ("[ INFO ] normal exit\n");
+
 	dbg_close ();
 	return 0;
 }

@@ -265,7 +265,7 @@ togglefulscreen (Arg args UNUSED) {
     if (cl) {
         Monitor* mon = &monitors[cl->monnum];
         if (!cl->fullscreen) {
-            XMoveResizeWindow (dpy, cl->window, 0, 0, mon->w - BORDERWIDTH*2, mon->h - BORDERWIDTH*2);
+            XMoveResizeWindow (dpy, cl->window, mon->x -BORDERWIDTH + FULLSCREENGAP, mon->y -BORDERWIDTH + FULLSCREENGAP, mon->w - 2*FULLSCREENGAP, mon->h - 2*FULLSCREENGAP);
             cl->fullscreen = true;
         } else if (cl->fullscreen){
             XMoveResizeWindow (dpy, cl->window, cl->x, cl->y, cl->w, cl->h);

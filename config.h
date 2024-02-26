@@ -10,7 +10,8 @@
 #define N_KEY_BINDS 33
 #define N_MOUSE_BINDS 3
 #define NOMODIFIER 0
-#define BORDERWIDTH 5
+#define FULLSCREENGAP 100
+#define BORDERWIDTH 1
 #define WORKSPACE_ALWAYSON 0
 #define NMON 1
 #define SNAPDIST 30
