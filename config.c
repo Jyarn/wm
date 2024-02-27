@@ -276,6 +276,12 @@ togglefulscreen (Arg args UNUSED) {
     }
 }
 
+void
+focusnextmon (Arg args UNUSED) {
+    currentmon = (currentmon+1)%NMON;
+    wm_focusNext (false);
+}
+
 const keyChord keyBinds[N_KEY_BINDS] = {
     { .modifier = Mod4Mask | ShiftMask  , .key = "e"                    , .cmd = exit_wm        , .args.vp = NULL },
     { .modifier = Mod4Mask              , .key = "Return"               , .cmd = spawn          , .args.str= "alacritty"},

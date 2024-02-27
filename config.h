@@ -7,10 +7,10 @@
 #include "event.h"
 #include "wm.h"
 
-#define N_KEY_BINDS 33
+#define N_KEY_BINDS 34
 #define N_MOUSE_BINDS 3
 #define NOMODIFIER 0
-#define FULLSCREENGAP 100
+#define FULLSCREENGAP 30
 #define BORDERWIDTH 1
 #define WORKSPACE_ALWAYSON 0
 #define NMON 1
