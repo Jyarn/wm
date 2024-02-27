@@ -58,8 +58,20 @@ void
 focus (Arg args UNUSED) {
     dbg_log ("[ INFO ] focus window %d\n", CURRENT_WINDOW);
     Client* cl = wm_fetchClient(CURRENT_WINDOW);
-    if (!cl)
-        return;
+    if (!cl) {
+        XButtonPressedEvent bpe = evt_currentEvent.xbutton;
+
+        for (int i = 0; i < NMON; i++) {
+            Monitor t = monitors[i];
+            if ((t.x <= bpe.x_root && bpe.x_root <= t.x + t.w)
+                    && (t.y <= bpe.y_root && bpe.y_root <= t.y + t.h))
+            {
+                currentmon = i;
+                wm_focusNext (false);
+                return ;
+            }
+        }
+    }
 
     wm_setFocus (cl);
 }
