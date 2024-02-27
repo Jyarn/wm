@@ -91,8 +91,8 @@ wm_changegeomclamp (Client* cl, int x, int y, int w, int h)
     dbg_log ("[ INFO ] clamp req, x: %d, y: %d, w: %d, h: %d\n", x, y, w, h);
     cl->w = CLAMP((int)monitors[cl->monnum].w, w, 1);
     cl->h = CLAMP((int)monitors[cl->monnum].h, h, 1);
-    cl->x = CLAMP((int)monitors[cl->monnum].w + (int)monitors[cl->monnum].x - cl->w, x, (int)monitors[cl->monnum].x);
-    cl->y = CLAMP((int)monitors[cl->monnum].h + (int)monitors[cl->monnum].y - cl->h, y, (int)monitors[cl->monnum].y);
+    cl->x = CLAMP((int)monitors[cl->monnum].w + (int)monitors[cl->monnum].x - cl->w, x, (int)monitors[cl->monnum].x - BORDERWIDTH);
+    cl->y = CLAMP((int)monitors[cl->monnum].h + (int)monitors[cl->monnum].y - cl->h, y, (int)monitors[cl->monnum].y - BORDERWIDTH);
     XMoveResizeWindow (dpy, cl->window, cl->x, cl->y, cl->w, cl->h);
 
     dbg_log ("[ INFO ] clamp res, x: %d, y: %d, w: %d, h: %d\n", cl->x, cl->y, cl->w, cl->h);

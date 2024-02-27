@@ -213,8 +213,10 @@ switchworkspace (Arg args)
 
     while (cur) {
         if (cur->workspace == args.ui && !cur->minimized) {
-            if (cur->fullscreen)
-                XMoveWindow (dpy, cur->window, monitors[cur->monnum].x, monitors[cur->monnum].y);
+            if (cur->fullscreen) {
+                Monitor mon = monitors[cur->monnum];
+                XMoveWindow (dpy, cur->window, mon.x -BORDERWIDTH + FULLSCREENGAP, mon.y -BORDERWIDTH + FULLSCREENGAP);
+            }
             else
                 XMoveWindow (dpy, cur->window, cur->x, cur->y);
         }
