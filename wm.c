@@ -277,7 +277,9 @@ wm_focusNext (bool focusMinimized) {
 		do {
 			if (!temp)
 				temp = activeClients;
-			else if ((workspacenum == temp->workspace || temp->workspace == WORKSPACE_ALWAYSON) && (focusMinimized ^ !temp->minimized)) {
+			else if ((temp->monnum == currentmon)
+                  && (workspacenum == temp->workspace || temp->workspace == WORKSPACE_ALWAYSON)
+                  && (focusMinimized ^ !temp->minimized)) {
                 if (temp->fullscreen){
                     Monitor mon = monitors[temp->monnum];
                     XMoveWindow (dpy, temp->window, mon.x -BORDERWIDTH + FULLSCREENGAP, mon.y -BORDERWIDTH + FULLSCREENGAP);

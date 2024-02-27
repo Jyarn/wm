@@ -314,7 +314,8 @@ const keyChord keyBinds[N_KEY_BINDS] = {
     { .modifier = Mod4Mask | ShiftMask  , .key = "7"                    , .cmd = movetoworkspace, .args.ui = 7 },
     { .modifier = Mod4Mask | ShiftMask  , .key = "8"                    , .cmd = movetoworkspace, .args.ui = 8 },
     { .modifier = Mod4Mask | ShiftMask  , .key = "9"                    , .cmd = movetoworkspace, .args.ui = 9 },
-    { .modifier = Mod4Mask              , .key = "comma"                , .cmd = cyclemon       , .args.vp = NULL },
+    { .modifier = Mod4Mask | ShiftMask  , .key = "comma"                , .cmd = cyclemon       , .args.vp = NULL },
+    { .modifier = Mod4Mask              , .key = "comma"                , .cmd = focusnextmon   , .args.vp = NULL },
     { .modifier = Mod4Mask              , .key = "f"                    , .cmd = togglefulscreen, .args.vp = NULL },
 };
 
