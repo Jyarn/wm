@@ -212,6 +212,7 @@ wm_manage (Window w) {
 	newClient->next = activeClients;
 	activeClients = newClient;
 	newClient->minimized = false;
+    newClient->fullscreen = false;
 
 	// init new client
 	newClient->window = w;
