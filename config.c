@@ -261,15 +261,25 @@ movetoworkspace (Arg args) {
 void
 cyclemon (Arg args UNUSED) {
     Client* cl = wm_fetchClient (CURRENT_WINDOW);
-    if (cl) {
+    if (!cl)
+        return ;
+
+    if (!cl->fullscreen) {
         int nmonnum = (cl->monnum + 1) % NMON;
         int nx = cl->x - monitors[cl->monnum].x + monitors[nmonnum].x;
         int ny = cl->y - monitors[cl->monnum].y + monitors[nmonnum].y;
         cl->monnum = nmonnum;
         dbg_log ("[ INFO ] cycling monitor to %d\n", cl->monnum);
         wm_changegeomclamp (cl, nx, ny, cl->w, cl->h);
-
         currentmon = cl->monnum;
+
+    } else {
+        int nmonnum = (cl->monnum + 1) % NMON;
+        Monitor* mon = &monitors[nmonnum];
+        XMoveResizeWindow (dpy, cl->window, mon->x -BORDERWIDTH + FULLSCREENGAP, mon->y -BORDERWIDTH + FULLSCREENGAP, mon->w - 2*FULLSCREENGAP, mon->h - 2*FULLSCREENGAP);
+        cl->monnum = nmonnum;
+        currentmon = nmonnum;
+
     }
 }
 
