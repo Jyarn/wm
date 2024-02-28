@@ -240,14 +240,15 @@ wm_unmanage (Window w) {
 
 	while (cur) {
 		if (cur->window == w) {
+			dbg_log ("[ INFO ] wm_unmanage\n");
+            if (cur == wm_focus)
+                wm_focusNext (false);
+
 			if (prev)
 				prev->next = cur->next;
 			else
 				activeClients = cur->next;
 
-			dbg_log ("[ INFO ] wm_unmanage\n");
-            if (cur == wm_focus)
-                wm_focusNext (false);
 			free (cur);
 			return;
 		}
@@ -292,7 +293,7 @@ wm_focusNext (bool focusMinimized) {
 			}
 			else
 				temp = temp->next;
-		} while (temp != wm_focus);
+		} while (temp != wm_focus || (!wm_focus && !temp));
 
 		wm_setFocus (NULL);
 	}
