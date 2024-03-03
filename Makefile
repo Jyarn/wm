@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-g -Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes
+CFLAGS=-g -Wall -Wextra -Wstrict-prototypes -Wmissing-prototypes -Wpedantic
 EXE=wm
 
 OBJ=wm.o event.o config.o debug.o
@@ -12,7 +12,7 @@ $(EXE): $(OBJ)
 	$(CC) $(LIB) $(OBJ) -o $(EXE)
 
 config.o: config.c *.h
-	$(CC) -g -Wall -Wextra $(INC) -c $< -o $@
+	$(CC) -g -Wall -Wextra -Wpedantic $(INC) -c $< -o $@
 
 %.o: %.c *.h
 	$(CC) $(CFLAGS) $(INC) -c $< -o $@
