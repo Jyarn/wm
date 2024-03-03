@@ -15,12 +15,6 @@
 #define WM_UNGRABPOINTER() XUngrabPointer (dpy, CurrentTime)
 #define CURRENT_WINDOW evt_currentEvent.xany.window
 
-typedef enum {
-    master,
-    slave,
-    floating,
-} ClientType;
-
 typedef struct {
     int screen;
     Window root;
@@ -33,7 +27,6 @@ typedef struct s_client {
     int x;
     int y;
     struct s_client* next;
-    ClientType type;
     Window window;
     bool fullscreen;
     bool minimized;
@@ -70,5 +63,6 @@ void wm_ungrab (Window);
 void wm_changeGeomRelative (Client*, int, int, int, int);
 Client* wm_fetchClient (Window);
 void wm_changegeomclamp (Client* cl, int x, int y, int w, int h);
+bool wm_sendatom (Client* cl, char* atomname);
 
 #endif

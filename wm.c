@@ -5,7 +5,6 @@
 #include <string.h>
 #include <X11/extensions/Xrandr.h>
 #include <sys/stat.h>
-#include <signal.h>
 #include <unistd.h>
 
 #include "wm.h"
@@ -216,7 +215,6 @@ wm_manage (Window w) {
 
 	// init new client
 	newClient->window = w;
-	newClient->type = floating;
 
 	// fetch geometry of window
 	newClient->workspace = workspacenum;
