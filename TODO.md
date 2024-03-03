@@ -20,8 +20,8 @@
  - [ ] CLI
  - [x] --debug flag
  - [x] --log flag
- - [ ] --monitor
 - [ ] EWMH compliance
+ - [ ] fix killClient
 - [ ] ICCM compliance
 - [ ] key chording
 - [ ] replace xlib with xcb
@@ -38,7 +38,7 @@ clickable desktop icons (kind of like windows)
 fluid simulation wallpaper
 
 ISSUES:
-[ ] input freezes
+[ ] input freezes because of infinite loop in wm_focusNext
  How to reproduce:
   1. Open Steam
   2. Open friends
