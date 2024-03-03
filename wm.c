@@ -46,6 +46,23 @@ start_wm (void)
 	XSelectInput (dpy, defaultScreen.root, winAttrib.event_mask);
     workspacenum = 1;
     currentmon = 0;
+
+    // get list of active windows
+    Window rootroot, parent;
+    Window* children;
+    unsigned int nchild;
+
+    XQueryTree (dpy, defaultScreen.root, &rootroot, &parent, &children, &nchild);
+    for (unsigned int i = 0; i < nchild; i++) {
+        if (wm_shouldbeManaged (children[i])) {
+            wm_manage (children[i]);
+            wm_grabKeys (children[i]);
+        }
+    }
+
+    if (children)
+        XFree (children);
+    wm_setFocus (activeClients);
 }
 
 /*

@@ -58,7 +58,6 @@ void wm_minimize (Client*);
 void wm_show (Client* cl);
 void wm_grabKeys (Window);
 void wm_grabMouse (Window);
-void wm_grabPointerBinds (Window);
 void wm_ungrab (Window);
 void wm_changeGeomRelative (Client*, int, int, int, int);
 Client* wm_fetchClient (Window);
