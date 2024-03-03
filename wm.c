@@ -278,9 +278,12 @@ wm_killClient (Window w) {
 	if (w == (Window)defaultScreen.root)
 		return;
 
+    if (!wm_sendatom (wm_fetchClient (w), "WM_DELETE_WINDOW")) {
+        XSetCloseDownMode (dpy, DestroyAll);
+        XKillClient (dpy, w);
+    }
+
 	wm_unmanage (w);
-	XSetCloseDownMode (dpy, DestroyAll);
-	XKillClient (dpy, w);
 }
 
 void
@@ -383,6 +386,37 @@ processcmdargs (int argc, char** argv)
 
     dbg_init (logfile);
     dbg_handlerOn ();
+}
+
+
+bool
+wm_sendatom (Client* cl, char* atomname)
+{
+    int navailable_atoms;
+    Atom* available_atoms;
+    Atom send = XInternAtom (dpy, atomname, False);
+    XGetWMProtocols (dpy, cl->window, &available_atoms, &navailable_atoms);
+
+    for (int i = 0; i <= navailable_atoms; i++) {
+        if (available_atoms[i] == send) {
+            XEvent msg;
+            msg.type = ClientMessage;
+
+
+            msg.xclient.display = dpy;
+            msg.xclient.window = cl->window;
+            msg.xclient.message_type = XInternAtom (dpy, "WM_PROTOCOLS", False);
+            msg.xclient.format = 32;
+            msg.xclient.data.l[0] = send;
+            msg.xclient.data.l[1] = CurrentTime;
+            XSendEvent (dpy, cl->window, False, NoEventMask, &msg);
+            XFree (available_atoms);
+            return true;
+        }
+    }
+
+    XFree (available_atoms);
+    return false;
 }
 
 
