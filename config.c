@@ -155,7 +155,7 @@ void
 resizeWindow (Arg args UNUSED) {
     XButtonPressedEvent ev = evt_currentEvent.xbutton;
     Client* cl = wm_fetchClient (ev.window);
-    if (!cl)
+    if (!cl || cl->transient)
         return;
 
     if (cl->fullscreen) {
@@ -315,6 +315,7 @@ togglefulscreen (Arg args UNUSED) {
         Monitor* mon = &monitors[cl->monnum];
         if (!cl->fullscreen) {
             XMoveResizeWindow (dpy, cl->window, mon->x -BORDERWIDTH + FULLSCREENGAP, mon->y -BORDERWIDTH + FULLSCREENGAP, mon->w - 2*FULLSCREENGAP, mon->h - 2*FULLSCREENGAP);
+            XRaiseWindow (dpy, cl->window);
             cl->fullscreen = true;
         } else if (cl->fullscreen){
             XMoveResizeWindow (dpy, cl->window, cl->x, cl->y, cl->w, cl->h);
@@ -329,6 +330,13 @@ focusnextmon (Arg args UNUSED) {
     wm_focusNext (false);
 }
 
+void
+togglepin (Arg args UNUSED) {
+    Client* cl = wm_fetchClient (CURRENT_WINDOW);
+    if (cl)
+        cl->pin = !cl->pin;
+}
+
 const keyChord keyBinds[N_KEY_BINDS] = {
     { .modifier = Mod4Mask | ShiftMask  , .key = "e"                    , .cmd = exit_wm        , .args.vp = NULL },
     { .modifier = Mod4Mask              , .key = "Return"               , .cmd = spawn          , .args.str= "alacritty"},
@@ -341,7 +349,8 @@ const keyChord keyBinds[N_KEY_BINDS] = {
     { .modifier = Mod4Mask              , .key = "q"                    , .cmd = minimize       , .args.vp = NULL},
     { .modifier = Mod4Mask              , .key = "j"                    , .cmd = tabwindows     , .args.b  = false },
     { .modifier = Mod4Mask | ShiftMask  , .key = "j"                    , .cmd = tabwindows     , .args.b  = true },
-    { .modifier = Mod4Mask              , .key = "0"                    , .cmd = switchworkspace, .args.ui = 0},
+    { .modifier = Mod4Mask | ShiftMask  , .key = "k"                    , .cmd = togglepin      , .args.vp = NULL },
+    { .modifier = Mod4Mask              , .key = "0"                    , .cmd = switchworkspace, .args.ui = 0 },
     { .modifier = Mod4Mask              , .key = "1"                    , .cmd = switchworkspace, .args.ui = 1 },
     { .modifier = Mod4Mask              , .key = "2"                    , .cmd = switchworkspace, .args.ui = 2 },
     { .modifier = Mod4Mask              , .key = "3"                    , .cmd = switchworkspace, .args.ui = 3 },

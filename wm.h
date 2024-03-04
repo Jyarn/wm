@@ -35,6 +35,8 @@ typedef struct s_client {
     Window window;
     bool fullscreen;
     bool minimized;
+    bool transient;
+    bool pin;
     unsigned int monnum;
     unsigned int workspace;
 } Client;

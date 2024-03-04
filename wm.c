@@ -55,10 +55,8 @@ start_wm (void)
 
     XQueryTree (dpy, defaultScreen.root, &rootroot, &parent, &children, &nchild);
     for (unsigned int i = 0; i < nchild; i++) {
-        if (wm_shouldbeManaged (children[i])) {
-            wm_manage (children[i]);
-            wm_grabKeys (children[i]);
-        }
+        wm_manage (children[i]);
+        wm_grabKeys (children[i]);
     }
 
     if (children)
@@ -212,9 +210,8 @@ wm_shouldbeManaged (Window w) {
 	XWindowAttributes attrib;
 	if (w == (Window)defaultScreen.root)
 		return false;
-	if (wm_fetchClient (w))
-		return false;
-	if (!XGetWindowAttributes (dpy, w, &attrib) || attrib.override_redirect)
+	if (!XGetWindowAttributes (dpy, w, &attrib) || attrib.override_redirect
+     || XGetTransientForHint (dpy, w, &w))
 		return false;
 	return true;
 }
@@ -234,15 +231,33 @@ wm_manage (Window w) {
 	activeClients = newClient;
 	newClient->minimized = false;
     newClient->fullscreen = false;
+    newClient->pin = false;
 
 	// init new client
 	newClient->window = w;
 
-	// fetch geometry of window
+    // set initial geometry
 	newClient->workspace = workspacenum;
     newClient->monnum = currentmon;
-    wm_changegeomclamp (newClient, monitors[currentmon].x, monitors[currentmon].y,
-                        monitors[currentmon].w >> 1, monitors[currentmon].h >> 1);
+    if (wm_shouldbeManaged (w)) {
+        int winwidth = monitors[currentmon].w / 2;
+        int winheight = monitors[currentmon].h / 2;
+        int centerx = monitors[currentmon].x + monitors[currentmon].w / 4;
+        int centery = monitors[currentmon].y + monitors[currentmon].h / 4;
+        wm_changegeomclamp (newClient, centerx, centery, winwidth, winheight);
+        newClient->transient = false;
+        dbg_log ("[ INFO ] not transient\n");
+
+    } else {
+        newClient->transient = true;
+        unsigned int depth, borderwidth;
+        Window root;
+        XGetGeometry (dpy, w, &root,
+                      &newClient->w, &newClient->y,
+                     (unsigned int*)&newClient->w, (unsigned int*)&newClient->h,
+                      &borderwidth, &depth);
+        dbg_log ("[ INFO ] transient\n");
+    }
 
 	// set event mask
 	XSelectInput (dpy, w, WIN_MASK);
@@ -337,10 +352,18 @@ wm_setFocus (Client* cl) {
 	}
 
 	dbg_log ("[ INFO ] wm_setfocus w = %d\n", cl->window);
+    // raise window if
+    // 1. wm_focus is not pinned
+    // 2. cl is pinned
+    //
+    // If swapping monitors/workspace and cl is not pinned don't raise window
+    if ((wm_focus && !wm_focus->pin) || cl->pin) {
+        XRaiseWindow (dpy, cl->window);
+    }
+
 	wm_focus = cl;
     currentmon = cl->monnum;
 	XSetInputFocus (dpy, cl->window, RevertToPointerRoot, CurrentTime);
-    XRaiseWindow (dpy, cl->window);
 }
 
 void
