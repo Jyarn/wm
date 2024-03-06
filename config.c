@@ -315,7 +315,7 @@ togglefulscreen (Arg args UNUSED) {
         Monitor* mon = &monitors[cl->monnum];
         if (!cl->fullscreen) {
             XMoveResizeWindow (dpy, cl->window, mon->x -BORDERWIDTH + FULLSCREENGAP, mon->y -BORDERWIDTH + FULLSCREENGAP, mon->w - 2*FULLSCREENGAP, mon->h - 2*FULLSCREENGAP);
-            XRaiseWindow (dpy, cl->window);
+            wm_setFocus (cl);
             cl->fullscreen = true;
         } else if (cl->fullscreen){
             XMoveResizeWindow (dpy, cl->window, cl->x, cl->y, cl->w, cl->h);
@@ -341,9 +341,9 @@ const keyChord keyBinds[N_KEY_BINDS] = {
     { .modifier = Mod4Mask | ShiftMask  , .key = "e"                    , .cmd = exit_wm        , .args.vp = NULL },
     { .modifier = Mod4Mask              , .key = "Return"               , .cmd = spawn          , .args.str= "alacritty"},
     { .modifier = Mod4Mask              , .key = "d"                    , .cmd = spawn          , .args.str= "dmenu_run"},
-    { .modifier = AnyModifier           , .key = "XF86AudioRaiseVolume" , .cmd = spawn          , .args.str= "pactl set-sink-volume @DEFAULT_SINK@ +5%"},
-    { .modifier = AnyModifier           , .key = "XF86AudioLowerVolume" , .cmd = spawn          , .args.str= "pactl set-sink-volume @DEFAULT_SINK@ -5%"},
-    { .modifier = AnyModifier           , .key = "XF86AudioMute"        , .cmd = spawn          , .args.str= "pactl set-source-mute @DEFAULT_SOURCE@ toggle"},
+    { .modifier = AnyModifier           , .key = "XF86AudioRaiseVolume" , .cmd = spawn          , .args.str= "amixer set Master 2+"},
+    { .modifier = AnyModifier           , .key = "XF86AudioLowerVolume" , .cmd = spawn          , .args.str= "amixer set Master 2-"},
+    { .modifier = AnyModifier           , .key = "XF86AudioMute"        , .cmd = spawn          , .args.str= "amixer -q set Master toggle"},
     { .modifier = Mod4Mask | ShiftMask  , .key = "q"                    , .cmd = killWindow     , .args.vp = NULL},
     { .modifier = Mod4Mask | ShiftMask  , .key = "Return"               , .cmd = spawn          , .args.str= "alacritty -e bash -c ~/.scripts/CAD.sh"},
     { .modifier = Mod4Mask              , .key = "q"                    , .cmd = minimize       , .args.vp = NULL},

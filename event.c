@@ -42,7 +42,7 @@ onMapReq (void) {
     Client* cl = wm_manage (ev->window);
     wm_grabKeys (ev->window);
     wm_grabMouse (ev->window);
-    wm_setFocus (cl);
+    XRaiseWindow (dpy, ev->window);
 }
 
 void

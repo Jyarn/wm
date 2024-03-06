@@ -352,13 +352,24 @@ wm_setFocus (Client* cl) {
 	}
 
 	dbg_log ("[ INFO ] wm_setfocus w = %d\n", cl->window);
-    // raise window if
-    // 1. wm_focus is not pinned
-    // 2. cl is pinned
-    //
-    // If swapping monitors/workspace and cl is not pinned don't raise window
-    if ((wm_focus && !wm_focus->pin) || cl->pin) {
+
+    Client* temp = activeClients;
+
+    if (cl->pin)
         XRaiseWindow (dpy, cl->window);
+    else {
+        while (temp) {
+            if ((temp->pin && temp->monnum == cl->monnum)
+             && (!cl->monnum || temp->workspace == cl->workspace)
+             && (temp->x <= cl->x + cl->w && cl->x <= temp->x + temp->w)
+             && (temp->y <= cl->y + cl->h && cl->y <= temp->y + temp->h))
+                break;
+
+            temp = temp->next;
+        }
+
+        if (!temp)
+            XRaiseWindow (dpy, cl->window);
     }
 
 	wm_focus = cl;
@@ -412,7 +423,6 @@ processcmdargs (int argc, char** argv)
             else {
                 fprintf (stderr, "[ ERROR ]: invalid log file\n");
                 exit (1);
-
             }
         }
     }
@@ -455,9 +465,9 @@ wm_sendatom (Client* cl, char* atomname)
 
 int
 main (int argc, char** argv) {
-    processcmdargs (argc, argv);
-	dbg_log ("[ INFO ]	wm starting\n");
 	start_wm ();
+    processcmdargs (argc, argv);
+	dbg_log ("[ INFO ] wm starting\n");
 	dbg_log ("[ INFO ] root = %d\n", defaultScreen.root);
 	evt_eventHandler ();
 	cleanup ();
