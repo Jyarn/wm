@@ -422,7 +422,6 @@ processcmdargs (int argc, char** argv)
                 logfile = argv[i+1];
             else {
                 fprintf (stderr, "[ ERROR ]: invalid log file\n");
-                exit (1);
             }
         }
     }

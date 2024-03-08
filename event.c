@@ -42,7 +42,7 @@ onMapReq (void) {
     Client* cl = wm_manage (ev->window);
     wm_grabKeys (ev->window);
     wm_grabMouse (ev->window);
-    XRaiseWindow (dpy, ev->window);
+    wm_setFocus (cl);
 }
 
 void
@@ -55,7 +55,7 @@ onWinConfig (void) {
     XConfigureRequestEvent* ev = &evt_currentEvent.xconfigurerequest;
     dbg_log ("[ INFO ] config request (x: %d, y: %d, w: %d, h: %d)\n", ev->x, ev->y, ev->width, ev->height);
     Client* cl = wm_fetchClient (ev->window);
-    if (cl) {
+    if (cl && cl->transient) {
         cl->monnum = currentmon;
         wm_changegeomclamp (cl, ev->x, ev->y, ev->width, ev->height);
         dbg_log ("[ INFO ] config req (win set to x: %d, y: %d, w: %d, h: %d)\n", cl->x, cl->y, cl->w, cl->h);

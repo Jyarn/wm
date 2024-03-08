@@ -38,7 +38,7 @@ clickable desktop icons (kind of like windows)
 fluid simulation wallpaper
 
 ISSUES:
-[ ] input freezes because of infinite loop in wm_focusNext
+[x] input freezes because of infinite loop in wm_focusNext
  How to reproduce:
   1. Open Steam
   2. Open friends
@@ -56,7 +56,7 @@ notes: not running, or slowing down execution seems to make it appear => event h
        setup configure request (broken again)
 [x] clicking buttons in firefox, and steam don't work
 [x] unable to select text in firefox
-[ ] unfocusing window makes window dissapear
+[x] unfocusing window makes window dissapear
 [x] go back shortcut doesn't work in firefox
 [ ] popup windows aren't able to recieve commands
 [x] alacritty crashing the window manager
@@ -85,14 +85,14 @@ notes: changed grabmode in grabMouse to Sync
 [x] unable to select text
 
 REFACTORS:
- [x] Cleanup coding style
- [x] Refactor out move binds
- [x] Remove redundant function args
- [x] Refactor user function signature to allow use a union instead of a void pointer
-[x] Cleanup coding style
-[x] Refactor out move binds
-[x] Remove redundant function args
+ - [x] Cleanup coding style
+ - [x] Refactor out move binds
+ - [x] Remove redundant function args
+ - [ ] Switch activeClients to a dynamic array
+ - [x] Refactor user function signature to allow use a union instead of a void pointer
+ - [x] Cleanup coding style
+ - [x] Refactor out move binds
+ - [x] Remove redundant function args
 
 OPTIMIZATIONS:
-[ ] Remove geom in Client struct
-[ ] Optimize stack managment for +-1 incs
+ - [ ] Remove geom in Client struct
