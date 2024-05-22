@@ -4,12 +4,10 @@
 #include <X11/Xlib.h>
 
 
-typedef void (*handler)(void);
+typedef void (*handler)(XEvent*);
 void evt_eventHandler (void);
 
 extern bool evt_run;
-extern bool ignorenextunmap;
-extern XEvent evt_currentEvent;
-extern handler evt_handlers[LASTEvent];
+extern handler handlers[LASTEvent];
 
 #endif

@@ -10,10 +10,10 @@
 #define N_KEY_BINDS 35
 #define N_MOUSE_BINDS 3
 #define NOMODIFIER 0
-#define FULLSCREENGAP 30
-#define BORDERWIDTH 1
+#define FULLSCREENGAP 0
+#define BORDERWIDTH 0
 #define WORKSPACE_ALWAYSON 0
-#define NMON 2
+#define NMON 1
 #define SNAPDIST 30
 #define CURRENTMON(cl) (monitors[cl->monnum])
 

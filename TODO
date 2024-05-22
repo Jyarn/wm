@@ -1,0 +1,55 @@
+ [ ] Window manager
+  [ ] substructre redirection??
+  [ ] create event handler
+  [ ] window focus changing
+  [ ] override Redirect Flag
+  [ ] logging
+   [ ] create error handler
+   [ ] basic logging
+ [ ] arg processing
+ [ ] floating (tinywm-ish)
+  [ ] moving windows
+  [ ] resizing windows
+  [ ] hiding windows
+ [ ] multi-monitor support (randr)
+ [ ] fullscreen
+ [ ] multiple workspaces
+ [ ] borders
+ [ ] cursor
+ [ ] CLI
+  [ ] --debug flag
+  [ ] --log flag
+ [ ] EWMH compliance
+  [ ] fix killClient
+ [ ] ICCM compliance
+ [ ] key chording
+ [ ] replace xlib with xcb
+ [ ] quality of life features
+  [ ] seperate tabbing for hidden and non-hidden windows
+ [ ] full vim mode emulation
+ [ ] window specific configuration
+ [ ] key simulation in vim mode
+ [ ] tiling
+ [ ] resize windows using keyboard
+ [ ] CLI
+  [ ] domain sockets
+  [ ] refreshing/restarting/shutting down
+toolbar
+
+animated wallpaper
+
+clickable desktop icons (kind of like windows)
+
+fluid simulation wallpaper
+
+program runner
+
+ISSUES:
+[ ] wm_focusNext creates infinite loop sometimes when closing steam
+[ ] popup windows aren't able to recieve commands
+
+REFACTORS:
+ - [ ] Switch activeClients to a dynamic array
+
+OPTIMIZATIONS:
+ - [ ] Remove geom in Client struct

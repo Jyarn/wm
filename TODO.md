@@ -28,6 +28,8 @@
 - [ ] replace xlib with xcb
 - [ ] quality of life features
  - [x] seperate tabbing for hidden and non-hidden windows
+ - [ ] key simulation (modal editing in any x window)
+ [ ] Experiment with having an int in each Client that reflects their stacking order
 
 toolbar
 
@@ -83,6 +85,7 @@ it looks funny
 [x] button presses do not register for certain windows
 notes: changed grabmode in grabMouse to Sync
 [x] unable to select text
+[x] resize doesn't ignore border when warping
 
 REFACTORS:
  - [x] Cleanup coding style
