@@ -24,7 +24,7 @@ typedef struct {
     char monitor;
     Window window;
 #ifdef __DEBUG
-    int id;
+    int id;           // id value to distinguish clients for debugging. -1 means Client is uninitialized
 #endif
 } Client;
 
